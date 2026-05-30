@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#0b0c0e" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="PROTOCOL" />
+<title>PROTOCOL — Teja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0c0e; --surface:#15171b; --surface2:#1e2127; --line:#2a2e36;
+    --text:#eef1f4; --muted:#8b929d; --faint:#5b626d;
+    --accent:#cdff3a; --accent-dim:#9bc62a; --hot:#ff5a3c; --cool:#4ea8ff; --gold:#ffc24b;
+    --shadow:0 8px 30px rgba(0,0,0,.45);
+    --safe-b:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:"IBM Plex Sans",-apple-system,system-ui,sans-serif;
+    overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
+  body{
+    background:
+      radial-gradient(900px 500px at 100% -10%, rgba(205,255,58,.06), transparent 60%),
+      radial-gradient(700px 500px at -10% 20%, rgba(78,168,255,.05), transparent 55%),
+      var(--bg);
+    min-height:100vh; padding-bottom:calc(86px + var(--safe-b));
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+  /* Header */
+  header{padding:22px 16px 8px;max-width:560px;margin:0 auto}
+  .brand{display:flex;align-items:baseline;justify-content:space-between}
+  .brand h1{font-family:"Bebas Neue",sans-serif;font-size:42px;letter-spacing:2px;
+    margin:0;line-height:.9}
+  .brand h1 span{color:var(--accent)}
+  .brand .sub{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);
+    letter-spacing:1px;text-transform:uppercase}
+  .phase{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint);margin-top:4px;letter-spacing:.5px}
+
+  /* Tab content */
+  .view{display:none;animation:fade .35s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* Cards */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    padding:16px;margin:14px 0;box-shadow:var(--shadow)}
+  .card.tight{padding:0;overflow:hidden}
+
+  /* Today hero */
+  .hero{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);
+    background:linear-gradient(150deg,#191d24,#121317);padding:18px;margin:14px 0}
+  .hero .daynav{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .hero .daynav button{background:var(--surface2);border:1px solid var(--line);color:var(--text);
+    width:34px;height:34px;border-radius:10px;font-size:18px;cursor:pointer}
+  .hero .dlabel{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);text-align:center;letter-spacing:1px}
+  .hero h2{font-family:"Bebas Neue",sans-serif;font-size:40px;letter-spacing:1.5px;margin:6px 0 2px;line-height:.95}
+  .pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+    text-transform:uppercase;letter-spacing:1px;padding:4px 9px;border-radius:99px;
+    background:rgba(205,255,58,.12);color:var(--accent);border:1px solid rgba(205,255,58,.25)}
+  .pill.rest{background:rgba(255,194,75,.12);color:var(--gold);border-color:rgba(255,194,75,.25)}
+  .pill.sport{background:rgba(255,90,60,.12);color:var(--hot);border-color:rgba(255,90,60,.28)}
+  .pill.recov{background:rgba(78,168,255,.12);color:var(--cool);border-color:rgba(78,168,255,.28)}
+  .progwrap{margin-top:14px}
+  .progbar{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden}
+  .progbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent-dim),var(--accent));
+    width:0;transition:width .4s ease}
+  .progtxt{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-top:6px}
+
+  /* Exercise */
+  .ex{border:1px solid var(--line);border-radius:14px;margin:10px 0;background:var(--surface2);overflow:hidden}
+  .ex .top{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;cursor:pointer}
+  .ex .nm{font-weight:600;font-size:15px}
+  .ex .scheme{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);margin-top:2px}
+  .ex .chev{color:var(--faint);font-size:13px;transition:transform .25s}
+  .ex.open .chev{transform:rotate(90deg)}
+  .ex .body{display:none;padding:0 14px 12px}
+  .ex.open .body{display:block}
+  .ex .note{font-size:12.5px;color:var(--muted);line-height:1.5;margin:2px 0 10px}
+  .setrow{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px dashed var(--line)}
+  .setrow .sidx{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--faint);width:46px}
+  .setrow input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:9px;padding:9px 10px;font-size:14px;font-family:"IBM Plex Mono",monospace}
+  .setrow input::placeholder{color:var(--faint)}
+  .unit{font-size:11px;color:var(--faint);font-family:"IBM Plex Mono",monospace}
+  .chk{width:30px;height:30px;border-radius:9px;border:1.5px solid var(--line);background:var(--bg);
+    flex:0 0 auto;cursor:pointer;display:flex;align-items:center;justify-content:center;color:transparent;font-size:15px;font-weight:700}
+  .chk.on{background:var(--accent);border-color:var(--accent);color:#0b0c0e}
+
+  /* generic section title */
+  .sect{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:1.5px;margin:22px 4px 2px;color:var(--text)}
+  .sect small{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--faint);letter-spacing:1px;display:block;margin-top:2px}
+
+  /* macros */
+  .macros{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px}
+  .macro{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+  .macro b{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:1px;display:block;line-height:1}
+  .macro span{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .macro.kcal b{color:var(--accent)} .macro.p b{color:var(--hot)} .macro.c b{color:var(--cool)} .macro.f b{color:var(--gold)}
+
+  /* meal blocks */
+  .meal h3{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:1px;margin:0 0 2px}
+  .meal .kc{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);margin-bottom:8px}
+  .meal ul{margin:0 0 8px;padding-left:18px}
+  .meal li{font-size:13.5px;line-height:1.65;color:var(--text)}
+  .meal li b{color:var(--accent)}
+  .meal .method{font-size:13px;color:var(--muted);line-height:1.6;margin-top:6px}
+  .variants{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .vchip{font-size:12px;background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:5px 11px;cursor:pointer;color:var(--muted)}
+  .vchip.on{background:rgba(205,255,58,.12);border-color:rgba(205,255,58,.3);color:var(--accent)}
+
+  /* groceries */
+  .gcat{font-family:"IBM Plex Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:1px;
+    color:var(--accent);margin:16px 4px 6px}
+  .gitem{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);
+    border-radius:12px;background:var(--surface2);margin:7px 0;cursor:pointer}
+  .gitem .gtxt{flex:1;font-size:14px}
+  .gitem .gqty{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint)}
+  .gitem.checked .gtxt{color:var(--faint);text-decoration:line-through}
+
+  /* weigh-in */
+  .wi{display:flex;gap:10px;margin-top:8px}
+  .wi .f{flex:1}
+  .wi label{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .wi input{width:100%;margin-top:5px;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:11px;font-family:"IBM Plex Mono",monospace;font-size:15px}
+  .wi-last{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-top:10px}
+
+  .btn{display:block;width:100%;text-align:center;background:var(--accent);color:#0b0c0e;border:none;
+    border-radius:12px;padding:13px;font-weight:700;font-size:14px;cursor:pointer;font-family:"IBM Plex Sans"}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:500}
+  .tipnote{font-size:12px;color:var(--faint);line-height:1.55;margin:10px 4px 0}
+
+  /* bottom nav */
+  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,14,17,.86);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);
+    padding:8px 0 calc(8px + var(--safe-b));z-index:50}
+  nav .row{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+  nav button{background:none;border:none;color:var(--faint);font-family:"IBM Plex Sans";
+    font-size:10.5px;font-weight:600;padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:.3px}
+  nav button .ic{font-size:19px;line-height:1}
+  nav button.on{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>PRO<span>TOCOL</span></h1>
+    <div style="text-align:right">
+      <div class="sub">Teja · 12-week</div>
+      <div class="phase" id="phaseTag">Phase 1 · Ease-in</div>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== TODAY ===================== -->
+<section class="view active" id="view-today">
+  <div class="wrap">
+    <div class="hero">
+      <div class="daynav">
+        <button id="prevDay">‹</button>
+        <div class="dlabel" id="dateLabel"></div>
+        <button id="nextDay">›</button>
+      </div>
+      <span class="pill" id="todayPill"></span>
+      <h2 id="todayTitle"></h2>
+      <div class="progwrap" id="todayProg">
+        <div class="progbar"><i id="progFill"></i></div>
+        <div class="progtxt" id="progText"></div>
+      </div>
+    </div>
+
+    <div id="todayBody"></div>
+
+    <div class="card" id="fuelCard">
+      <div class="sect" style="margin-top:0">Today's Fuel <small>Tue–Sun target · Mon runs lower (fast)</small></div>
+      <div class="macros">
+        <div class="macro kcal"><b>2050</b><span>kcal</span></div>
+        <div class="macro p"><b>160</b><span>protein g</span></div>
+        <div class="macro c"><b>215</b><span>carbs g</span></div>
+        <div class="macro f"><b>60</b><span>fat g</span></div>
+      </div>
+      <div class="tipnote">Eat rice <b>with</b> protein + veg, never alone — and take a 10–15 min walk after lunch &amp; dinner (your A1c lever). Full recipes in the Meals tab.</div>
+    </div>
+
+    <div class="card">
+      <div class="sect" style="margin-top:0">Weigh-in <small>Daily weight · weekly waist</small></div>
+      <div class="wi">
+        <div class="f"><label>Weight (kg)</label><input id="wWeight" type="number" inputmode="decimal" placeholder="—"></div>
+        <div class="f"><label>Waist (cm)</label><input id="wWaist" type="number" inputmode="decimal" placeholder="—"></div>
+      </div>
+      <div class="wi-last" id="wiLast"></div>
+      <div class="tipnote">Read the <b>7-day average</b>, not single days. Flat scale + shrinking waist = recomp working.</div>
+    </div>
+
+    <div class="card">
+      <div class="sect" style="margin-top:0">Backup <small>your data lives on this device only</small></div>
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button class="btn" id="exportBtn" style="flex:1">Export</button>
+        <button class="btn ghost" id="importBtn" style="flex:1">Import</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <div class="tipnote"><b>Do this weekly:</b> Export saves a backup file — drop it in iCloud/Files. Switching devices or clearing Safari? Import it back. This is your insurance until sync is added.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WEEK ===================== -->
+<section class="view" id="view-week">
+  <div class="wrap"><div id="weekBody"></div></div>
+</section>
+
+<!-- ===================== MEALS ===================== -->
+<section class="view" id="view-meals">
+  <div class="wrap" id="mealsBody"></div>
+</section>
+
+<!-- ===================== SHOP ===================== -->
+<section class="view" id="view-shop">
+  <div class="wrap">
+    <div class="sect" style="margin-top:14px">Weekly Shop <small>Tap to check off · saved on this device</small></div>
+    <div id="shopBody"></div>
+    <button class="btn ghost" id="resetShop" style="margin:16px 0 8px">Reset checklist</button>
+  </div>
+</section>
+
+<nav>
+  <div class="row">
+    <button class="on" data-tab="today"><span class="ic">▦</span>Today</button>
+    <button data-tab="week"><span class="ic">≡</span>Week</button>
+    <button data-tab="meals"><span class="ic">◍</span>Meals</button>
+    <button data-tab="shop"><span class="ic">⊞</span>Shop</button>
+  </div>
+</nav>
+
+<script>
+/* ---------- storage (device-local, with graceful fallback) ---------- */
+const mem={};
+const DB={
+  get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return k in mem?mem[k]:d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){mem[k]=v}}
+};
+
+/* ---------- plan data ---------- */
+const REST={type:'rest',pill:'Rest day',pillClass:'rest',
+  title:'Fast / Rest',
+  blurb:'Fasting day. Keep it light — walk for your steps and do a few minutes of shoulder band work and mobility. Break the fast protein- and veg-forward, not with rice.',
+  items:[
+    {name:'Steps',scheme:'8–10k',sets:0,note:'Two 15-min walks ≈ 3,500 steps.'},
+    {name:'Shoulder band routine',scheme:'5 min',sets:0,note:'External rotations + scap squeezes — keep the cuff happy.'},
+    {name:'Mobility / stretch',scheme:'10 min',sets:0,note:'Hips and shoulders.'}
+  ]};
+const SPORT={type:'sport',pill:'Cricket',pillClass:'sport',
+  title:'Cricket Day',
+  blurb:'Your sport IS your sprint, agility, plyo & rotational-power training. Warm up properly and respect the throwing progression.',
+  items:[
+    {name:'Pre-game warm-up',scheme:'10–15 min',sets:0,note:'Dynamic mobility + band cuff activation + a GRADUAL throwing build-up. Never go cold into hard throws.'},
+    {name:'Return-to-throw',scheme:'staged',sets:0,note:'Wk1–3: short throws ~50%. Wk3–6: build distance first, then intensity. Never both at once.'},
+    {name:'Bowling load',scheme:'ramp slowly',sets:0,note:'If bowling, increase deliveries gradually week to week. Workload spikes are the #1 injury cause. Sharp/next-day shoulder pain → drop back a stage.'}
+  ]};
+const RECOV={type:'recovery',pill:'Recovery',pillClass:'recov',
+  title:'Active Recovery',
+  blurb:'Recover from cricket. Easy effort only — this is not a workout.',
+  items:[
+    {name:'Easy cardio (LISS)',scheme:'30–40 min',sets:0,note:'Incline-treadmill walk or bike, conversational pace.'},
+    {name:'Long walk',scheme:'steps',sets:0,note:'Bank your step goal.'},
+    {name:'Mobility',scheme:'10 min',sets:0,note:'Shoulders + hips especially.'}
+  ]};
+
+const TUE={type:'lift',pill:'Lower + Core',pillClass:'',title:'Lower · Strength',
+  blurb:'Heavy here recovers in time for Friday cricket.',
+  items:[
+    {name:'Leg press',scheme:'4 × 8–10',sets:4},
+    {name:'DB Romanian deadlift',scheme:'3 × 10',sets:3,note:'Smith-machine RDL if no heavy DBs.'},
+    {name:'DB walking lunge / Bulgarian split squat',scheme:'3 × 10 / leg',sets:3},
+    {name:'Leg curl (machine)',scheme:'3 × 12',sets:3},
+    {name:'Calf raise',scheme:'4 × 15',sets:4},
+    {name:'Weighted bench / decline crunch',scheme:'3 × 12–15',sets:3,note:'Add weight over time — train abs like a muscle.'},
+    {name:'Band Pallof press',scheme:'3 × 12 / side',sets:3,note:'Anti-rotation — also protects the shoulder.'}
+  ]};
+const WED={type:'lift',pill:'Push + Core',pillClass:'',title:'Push · Shoulder-Safe',
+  blurb:'Two days before throwing — enough recovery. Stop any pressing that pinches.',
+  items:[
+    {name:'Band external rotation (warm-up)',scheme:'2 × 15',sets:2,note:'+ scap push-ups.'},
+    {name:'Incline DB press (neutral/angled grip)',scheme:'4 × 8–10',sets:4},
+    {name:'Machine chest press / flat DB press',scheme:'3 × 10–12',sets:3},
+    {name:'Pec deck / band fly',scheme:'3 × 12–15',sets:3},
+    {name:'Machine shoulder press (neutral, light)',scheme:'3 × 10–12',sets:3,note:'Pain-free only. Skip if any pinch.'},
+    {name:'DB lateral raise (light, scapular plane)',scheme:'3 × 12–15',sets:3},
+    {name:'Triceps pushdown',scheme:'3 × 12',sets:3},
+    {name:'Overhead triceps extension',scheme:'3 × 12',sets:3},
+    {name:'Lying leg raise',scheme:'3 × 12–15',sets:3}
+  ]};
+const THU={type:'lift',pill:'Pull + Arms',pillClass:'',title:'Pull · Arms',
+  blurb:'Keep it moderate, not to failure — primes the shoulder for Friday.',
+  items:[
+    {name:'Lat pulldown (neutral grip)',scheme:'4 × 8–10',sets:4},
+    {name:'Seated cable / machine row (neutral)',scheme:'4 × 10',sets:4},
+    {name:'Single-arm DB row',scheme:'3 × 10 / side',sets:3},
+    {name:'Face pull',scheme:'3 × 15–20',sets:3,note:'Do these well — the key shoulder-health move.'},
+    {name:'Rear-delt fly',scheme:'3 × 15',sets:3},
+    {name:'DB curl',scheme:'3 × 10–12',sets:3,note:'Arm priority — your weak point.'},
+    {name:'Hammer curl',scheme:'3 × 12',sets:3},
+    {name:'Band Pallof press',scheme:'3 × 12 / side',sets:3},
+    {name:'Side plank',scheme:'3 × 30 s / side',sets:3}
+  ]};
+const SUN={type:'lift',pill:'Upper + Arms',pillClass:'',title:'Upper · Balanced',
+  blurb:'Shoulders recovered from Friday. Arm-focused finisher.',
+  items:[
+    {name:'Band cuff warm-up',scheme:'2 × 15',sets:2},
+    {name:'Incline DB / machine press',scheme:'3 × 10',sets:3},
+    {name:'Lat pulldown / row',scheme:'3 × 10',sets:3},
+    {name:'DB lateral raise',scheme:'3 × 12–15',sets:3},
+    {name:'EZ/DB curl',scheme:'4 × 10',sets:4,note:'Arm priority.'},
+    {name:'Triceps pushdown',scheme:'4 × 10',sets:4},
+    {name:'Incline DB curl',scheme:'3 × 12',sets:3},
+    {name:'Close-grip press',scheme:'3 × 12',sets:3},
+    {name:'Weighted crunch',scheme:'3 × 15',sets:3},
+    {name:'Leg raise',scheme:'3 × 12',sets:3},
+    {name:'Cable/band woodchopper',scheme:'3 × 12 / side',sets:3}
+  ]};
+
+// 0=Sun ... 6=Sat
+const WEEK=[
+  {day:'Sunday',s:SUN},
+  {day:'Monday',s:REST},
+  {day:'Tuesday',s:TUE},
+  {day:'Wednesday',s:WED},
+  {day:'Thursday',s:THU},
+  {day:'Friday',s:SPORT},
+  {day:'Saturday',s:RECOV}
+];
+
+/* ---------- date helpers ---------- */
+let offset=0;
+function curDate(){const d=new Date();d.setDate(d.getDate()+offset);return d}
+function keyOf(d){return d.toISOString().slice(0,10)}
+function exId(name){return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,28)}
+
+/* ---------- render TODAY ---------- */
+function renderToday(){
+  const d=curDate(), dow=d.getDay(), info=WEEK[dow], s=info.s;
+  const dateKey=keyOf(d);
+  document.getElementById('dateLabel').textContent=
+    d.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'}).toUpperCase()+(offset===0?' · TODAY':'');
+  const pill=document.getElementById('todayPill');
+  pill.textContent=s.pill; pill.className='pill '+(s.pillClass||'');
+  document.getElementById('todayTitle').textContent=s.title;
+
+  const body=document.getElementById('todayBody');
+  let html='<div class="card"><div class="note" style="font-size:13px;color:var(--muted);line-height:1.55;margin:0">'+s.blurb+'</div></div>';
+  const log=DB.get('log-'+dateKey,{});
+  s.items.forEach((ex,i)=>{
+    const id=exId(ex.name);
+    const st=log[id]||{w:[],done:[]};
+    html+='<div class="ex" data-ex="'+id+'">';
+    html+='<div class="top" onclick="toggleEx(this)"><div><div class="nm">'+ex.name+'</div><div class="scheme">'+ex.scheme+'</div></div><div class="chev">▶</div></div>';
+    html+='<div class="body">';
+    if(ex.note) html+='<div class="note">'+ex.note+'</div>';
+    if(ex.sets>0){
+      for(let k=0;k<ex.sets;k++){
+        const w=st.w[k]||'', done=st.done[k]?'on':'';
+        html+='<div class="setrow"><span class="sidx">Set '+(k+1)+'</span>'+
+          '<input type="number" inputmode="decimal" placeholder="wt" value="'+w+'" oninput="logW(\''+dateKey+'\',\''+id+'\','+k+',this.value)"><span class="unit">kg</span>'+
+          '<div class="chk '+done+'" onclick="logDone(\''+dateKey+'\',\''+id+'\','+k+',this)">✓</div></div>';
+      }
+    } else {
+      const done=st.done[0]?'on':'';
+      html+='<div class="setrow"><span class="sidx">Done</span><span style="flex:1;font-size:13px;color:var(--muted)">Mark complete</span>'+
+        '<div class="chk '+done+'" onclick="logDone(\''+dateKey+'\',\''+id+'\',0,this)">✓</div></div>';
+    }
+    html+='</div></div>';
+  });
+  body.innerHTML=html;
+  document.getElementById('fuelCard').style.display=(s.type==='rest')?'none':'block';
+  updateProg();
+
+  // weigh-in
+  const wlog=DB.get('weigh-'+dateKey,{});
+  document.getElementById('wWeight').value=wlog.weight||'';
+  document.getElementById('wWaist').value=wlog.waist||'';
+  showLastWeigh();
+}
+
+function toggleEx(el){el.parentElement.classList.toggle('open')}
+
+function logW(dateKey,id,k,val){
+  const log=DB.get('log-'+dateKey,{}); const st=log[id]||{w:[],done:[]};
+  st.w[k]=val; log[id]=st; DB.set('log-'+dateKey,log);
+}
+function logDone(dateKey,id,k,el){
+  const log=DB.get('log-'+dateKey,{}); const st=log[id]||{w:[],done:[]};
+  st.done[k]=!st.done[k]; log[id]=st; DB.set('log-'+dateKey,log);
+  el.classList.toggle('on',st.done[k]); updateProg();
+}
+function updateProg(){
+  const d=curDate(), s=WEEK[d.getDay()].s;
+  const pw=document.getElementById('todayProg');
+  if(s.type!=='lift'){pw.style.display='none';return} pw.style.display='block';
+  const log=DB.get('log-'+keyOf(d),{}); let total=0,done=0;
+  s.items.forEach(ex=>{const n=ex.sets>0?ex.sets:1;total+=n;const st=log[exId(ex.name)];if(st)st.done.forEach(x=>{if(x)done++})});
+  document.getElementById('progFill').style.width=(total?Math.round(done/total*100):0)+'%';
+  document.getElementById('progText').textContent=done+' / '+total+' sets logged';
+}
+function saveWeigh(){
+  const dateKey=keyOf(curDate());
+  DB.set('weigh-'+dateKey,{weight:document.getElementById('wWeight').value,waist:document.getElementById('wWaist').value});
+  showLastWeigh();
+}
+function showLastWeigh(){
+  // find most recent weight in last 14 days
+  let out='';
+  for(let i=0;i<14;i++){const dd=new Date();dd.setDate(dd.getDate()-i);const w=DB.get('weigh-'+keyOf(dd),null);
+    if(w&&w.weight){out='Last logged: '+w.weight+' kg'+(w.waist?' · '+w.waist+' cm waist':'')+(i?' ('+i+'d ago)':' (today)');break}}
+  document.getElementById('wiLast').textContent=out;
+}
+document.getElementById('wWeight').addEventListener('change',saveWeigh);
+document.getElementById('wWaist').addEventListener('change',saveWeigh);
+document.getElementById('prevDay').onclick=()=>{offset--;renderToday()};
+document.getElementById('nextDay').onclick=()=>{offset++;renderToday()};
+
+/* ---------- render WEEK ---------- */
+function renderWeek(){
+  let html='<div class="sect" style="margin-top:14px">The Week <small>Mon fast · Fri cricket · built around recovery</small></div>';
+  const order=[2,3,4,5,6,0,1]; // Tue..Mon for reading flow
+  order.forEach(i=>{
+    const w=WEEK[i], s=w.s;
+    html+='<div class="card tight"><div class="top" style="display:flex;justify-content:space-between;align-items:center;padding:15px 16px;cursor:pointer" onclick="this.parentElement.classList.toggle(\'open\')">';
+    html+='<div><div style="font-family:\'Bebas Neue\';font-size:24px;letter-spacing:1px">'+w.day+'</div>'+
+      '<span class="pill '+(s.pillClass||'')+'" style="margin-top:4px">'+s.pill+' · '+s.title+'</span></div>';
+    html+='<div class="chev" style="color:var(--faint)">▶</div></div>';
+    html+='<div class="body" style="display:none;padding:0 16px 14px"><div class="note" style="font-size:12.5px;color:var(--muted);margin:0 0 8px">'+s.blurb+'</div><ul style="margin:0;padding-left:18px">';
+    s.items.forEach(ex=>{html+='<li style="font-size:13.5px;line-height:1.7"><b style="color:var(--text)">'+ex.name+'</b> <span style="font-family:\'IBM Plex Mono\';color:var(--accent);font-size:12px">'+ex.scheme+'</span></li>'});
+    html+='</ul></div></div>';
+  });
+  document.getElementById('weekBody').innerHTML=html;
+  document.querySelectorAll('#view-week .card.tight .top').forEach(t=>{
+    t.addEventListener('click',()=>{const b=t.nextElementSibling;const open=t.parentElement.classList.contains('open');
+      b.style.display=open?'block':'none';t.querySelector('.chev').style.transform=open?'rotate(90deg)':'none'});
+  });
+}
+
+/* ---------- MEALS ---------- */
+const MEALS_HTML=`
+<div class="sect" style="margin-top:14px">Daily Template <small>repeat across the week</small></div>
+<div class="card meal">
+  <h3>① Breakfast — Optimized Smoothie</h3><div class="kc">~420 kcal · ~40 g protein</div>
+  <ul>
+    <li><b>1 scoop</b> whey protein</li>
+    <li><b>100 g</b> non-fat Greek yogurt</li>
+    <li><b>1 cup</b> frozen mixed berries</li>
+    <li><b>½</b> banana (frozen)</li>
+    <li><b>1 tbsp</b> chia seeds</li>
+    <li><b>1 cup</b> unsweetened almond milk</li>
+    <li><b>1 scoop</b> collagen (optional · joint support)</li>
+    <li><b>1 tsp</b> each maca + moringa</li>
+  </ul>
+  <div class="method">Blend 30–45s. Dropped vs your old recipe: oats, peanut butter, almonds, whole milk — that's the ~600 kcal you're saving.</div>
+</div>
+
+<div class="card meal">
+  <h3>②③ Lunch &amp; Dinner — Build-a-Plate</h3><div class="kc">~550–650 kcal each · pick a protein</div>
+  <div class="variants">
+    <span class="vchip on">Chicken</span><span class="vchip">Salmon</span><span class="vchip">Eggs</span><span class="vchip">Paneer</span>
+  </div>
+  <ul>
+    <li><b>Rice</b> — 150 g cooked basmati/brown (≈ ½ cup dry). Plate it, put the pot away.</li>
+    <li><b>Protein</b> — chicken 150–180 g · salmon 120–150 g · eggs 3 · paneer 80–100 g</li>
+    <li><b>Veg</b> — 150–200 g Costco mixed veg, stirred into the curry + piled on the side</li>
+    <li><b>Oil</b> — measured 1 tbsp per dish (not a free pour)</li>
+  </ul>
+  <div class="method"><b>Quick chicken curry:</b> brown onion + ginger-garlic in 1 tbsp oil, add tomato + turmeric/cumin/garam masala/chili, add diced chicken, simmer ~15 min, stir in mixed veg for the last 5. Serve over the measured rice.<br><br><b>Rule:</b> always eat rice WITH protein + veg + fat (never alone), then walk 10–15 min after. That's your A1c lever.</div>
+</div>
+
+<div class="card meal">
+  <h3>Snacks — pick 1–2/day</h3><div class="kc">for the long coding blocks</div>
+  <ul>
+    <li>Greek yogurt + cinnamon · roasted chana · 2 boiled eggs</li>
+    <li>Whey in water · apple + string cheese</li>
+    <li>Cucumber/carrot + hummus · black coffee / green tea</li>
+  </ul>
+</div>
+
+<div class="card meal">
+  <h3>Supplements</h3>
+  <ul>
+    <li><b>Creatine</b> 5 g/day · any time</li>
+    <li><b>L-citrulline</b> 1.5–3 g pre-workout (optional)</li>
+    <li><b>Maca</b> — already in the smoothie</li>
+    <li><b>Vitamin D</b> — get a level tested first, then dose to result</li>
+    <li style="color:var(--faint)">Skip "test boosters" — your T is normal.</li>
+  </ul>
+</div>`;
+function renderMeals(){
+  document.getElementById('mealsBody').innerHTML=MEALS_HTML;
+  document.querySelectorAll('.vchip').forEach(c=>c.addEventListener('click',()=>{
+    document.querySelectorAll('.vchip').forEach(x=>x.classList.remove('on'));c.classList.add('on')}));
+}
+
+/* ---------- GROCERIES ---------- */
+const GROCERIES={
+  'Protein':[['Chicken breast/thigh','~1 kg'],['Salmon fillets','2'],['Eggs','1 dozen'],['Paneer','~250 g'],['Non-fat Greek yogurt','large tub'],['Whey protein','—'],['String cheese','pack']],
+  'Grains':[['Basmati or brown rice','—'],['Rolled oats (optional)','—']],
+  'Produce & Veg':[['Costco frozen mixed veg','bag'],['Frozen mixed berries','bag'],['Bananas','small bunch'],['Onions / tomatoes','—'],['Ginger + garlic','—'],['Cucumber / carrots / greens','—'],['Lemons','few']],
+  'Fats':[['Olive oil','—'],['Mixed nuts','small bag'],['Chia seeds','—']],
+  'Pantry & Extras':[['Unsweetened almond milk','—'],['Roasted chana','—'],['Hummus','—'],['Maca + moringa','—'],['Collagen','—'],['Spices (turmeric, cumin, garam masala, chili)','—']],
+  'Supplements':[['Creatine monohydrate','—'],['L-citrulline (optional)','—'],['Vitamin D (after testing)','—']]
+};
+function renderShop(){
+  const checked=DB.get('shop',{}); let html='';
+  Object.keys(GROCERIES).forEach(cat=>{
+    html+='<div class="gcat">'+cat+'</div>';
+    GROCERIES[cat].forEach(([n,q])=>{const id=exId(cat+'-'+n);const on=checked[id]?'checked':'';
+      html+='<div class="gitem '+on+'" data-id="'+id+'" onclick="toggleShop(this)"><div class="chk '+(checked[id]?'on':'')+'">✓</div><div class="gtxt">'+n+'</div><div class="gqty">'+q+'</div></div>'});
+  });
+  document.getElementById('shopBody').innerHTML=html;
+}
+function toggleShop(el){
+  const id=el.dataset.id; const checked=DB.get('shop',{}); checked[id]=!checked[id];
+  DB.set('shop',checked); el.classList.toggle('checked',checked[id]); el.querySelector('.chk').classList.toggle('on',checked[id]);
+}
+document.getElementById('resetShop').onclick=()=>{DB.set('shop',{});renderShop()};
+
+/* ---------- nav ---------- */
+document.querySelectorAll('nav button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    const tab=b.dataset.tab;
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+tab).classList.add('active');
+    window.scrollTo(0,0);
+  });
+});
+
+/* ---------- phase tag ---------- */
+(function(){
+  const start=DB.get('startDate',null);
+  if(!start){DB.set('startDate',keyOf(new Date()))}
+  const s=new Date(DB.get('startDate'));const wk=Math.floor((new Date()-s)/6048e5)+1;
+  let p='Phase 1 · Ease-in';
+  if(wk>=3&&wk<=6)p='Phase 2 · Build';else if(wk>=7&&wk<=9)p='Phase 3 · Push';else if(wk>=10)p='Phase 4 · Peak';
+  document.getElementById('phaseTag').textContent=(wk>=1&&wk<=14?'Week '+wk+' · ':'')+p;
+})();
+
+/* ---------- backup: export / import ---------- */
+function dumpAll(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);o[k]=localStorage.getItem(k)}}catch(e){Object.keys(mem).forEach(k=>o[k]=JSON.stringify(mem[k]))}return o}
+document.getElementById('exportBtn').onclick=()=>{
+  const blob=new Blob([JSON.stringify({app:'protocol',exported:new Date().toISOString(),data:dumpAll()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='protocol-backup-'+keyOf(new Date())+'.json';a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=(e)=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{
+    const parsed=JSON.parse(r.result);const data=parsed.data||parsed;
+    if(!data||typeof data!=='object')throw 0;
+    if(!confirm('Import backup and overwrite current data on this device?'))return;
+    Object.keys(data).forEach(k=>{try{localStorage.setItem(k,data[k])}catch(_){mem[k]=JSON.parse(data[k])}});
+    renderToday();renderShop();alert('Backup restored.');
+  }catch(err){alert('That file doesn\u2019t look like a valid backup.')}};
+  r.readAsText(f);e.target.value='';
+};
+
+/* ---------- init ---------- */
+renderToday();renderWeek();renderMeals();renderShop();
+</script>
+</body>
+</html>
