@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  PROTOCOL API - Lambda Web Function (Node 24, Hono) + DynamoDB + Bedrock.
+  Account-agnostic: nothing here names an account, so the same template
+  deploys to any account/region via deploy.sh <env>.
+
+Parameters:
+  AppName:
+    Type: String
+    Default: protocol
+    AllowedPattern: '^[a-z][a-z0-9-]{1,30}$'
+  ArtifactBucket:
+    Type: String
+    Description: Versioned bucket from the bootstrap stack
+  CodeKey:
+    Type: String
+  CodeVersion:
+    Type: String
+    Description: S3 object version id of the code zip (pins the revision)
+  ModelId:
+    Type: String
+    Default: us.anthropic.claude-sonnet-5-5
+    Description: Bedrock inference profile id (US geo keeps data in US regions)
+  FoundationModelPattern:
+    Type: String
+    Default: anthropic.claude-*
+    Description: Foundation-model ids the inference profile may route to (IAM)
+  AllowedOrigins:
+    Type: String
+    Default: https://tejaktr18.github.io
+    Description: Comma-separated browser origins allowed by CORS
+  AppVersion:
+    Type: String
+    Default: dev
+
+Resources:
+  # ---------------- data ----------------
+  DataTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain          # never lose logs on stack delete
+    UpdateReplacePolicy: Retain
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: PK, AttributeType: S }
+        - { AttributeName: SK, AttributeType: S }
+      KeySchema:
+        - { AttributeName: PK, KeyType: HASH }
+        - { AttributeName: SK, KeyType: RANGE }
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - { Key: app, Value: !Ref AppName }
+
+  # Random bearer token the app sends. Read it with:
+  #   aws secretsmanager get-secret-value --secret-id <ApiTokenSecretArn> --query SecretString --output text
+  ApiTokenSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: !Sub '${AppName} API bearer token'
+      GenerateSecretString:
+        PasswordLength: 48
+        ExcludePunctuation: true
+
+  # ---------------- compute ----------------
+  # AWS::Serverless::WebFunction has no `Policies` shorthand (unlike
+  # AWS::Serverless::Function), so the role is written out explicitly.
+  ApiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: app
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: Data
+                Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Query
+                  - dynamodb:BatchWriteItem
+                Resource: !GetAtt DataTable.Arn
+              - Sid: Token
+                Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Ref ApiTokenSecret
+              # Cross-region inference profiles need both the profile and the
+              # underlying foundation models in every region they route to.
+              - Sid: Bedrock
+                Effect: Allow
+                Action: bedrock:InvokeModel
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:bedrock:*:${AWS::AccountId}:inference-profile/${ModelId}'
+                  - !Sub 'arn:${AWS::Partition}:bedrock:*::foundation-model/${FoundationModelPattern}'
+      Tags:
+        - { Key: app, Value: !Ref AppName }
+
+  Api:
+    Type: AWS::Serverless::WebFunction
+    Properties:
+      FunctionName: !Sub '${AppName}-api'
+      Runtime: nodejs24.x
+      AuthType: ApplicationManaged      # public URL; the app checks the bearer token
+      CodeUri:
+        Bucket: !Ref ArtifactBucket
+        Key: !Ref CodeKey
+        Version: !Ref CodeVersion
+      ExecutionRoleArn: !GetAtt ApiRole.Arn
+      Timeout: 60                       # Bedrock vision calls can take 5-20 s
+      RevisionDescription: !Ref AppVersion
+      EnvironmentVariables:
+        TABLE_NAME: !Ref DataTable
+        TOKEN_SECRET_ARN: !Ref ApiTokenSecret
+        MODEL_ID: !Ref ModelId
+        APP_REGION: !Ref AWS::Region
+        ALLOWED_ORIGINS: !Ref AllowedOrigins
+        APP_VERSION: !Ref AppVersion
+      Tags:
+        app: !Ref AppName
+
+Outputs:
+  ApiUrl:
+    Description: Paste into the app (Today tab -> Cloud sync)
+    Value: !Sub 'https://${ApiEndpoint.DomainName}'
+  ApiTokenSecretArn:
+    Value: !Ref ApiTokenSecret
+  TableName:
+    Value: !Ref DataTable

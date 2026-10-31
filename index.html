@@ -71,6 +71,7 @@
   .progbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent-dim),var(--accent));
     width:0;transition:width .4s ease}
   .progtxt{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-top:6px}
+  .phasenote{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--gold);margin-top:8px;line-height:1.5}
 
   /* Exercise */
   .ex{border:1px solid var(--line);border-radius:14px;margin:10px 0;background:var(--surface2);overflow:hidden}
@@ -110,9 +111,12 @@
   .meal li{font-size:13.5px;line-height:1.65;color:var(--text)}
   .meal li b{color:var(--accent)}
   .meal .method{font-size:13px;color:var(--muted);line-height:1.6;margin-top:6px}
-  .variants{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
-  .vchip{font-size:12px;background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:5px 11px;cursor:pointer;color:var(--muted)}
-  .vchip.on{background:rgba(205,255,58,.12);border-color:rgba(205,255,58,.3);color:var(--accent)}
+  .meal .method b{color:var(--text)}
+  .mt{width:100%;border-collapse:collapse;margin:6px 0 4px;font-size:12.5px}
+  .mt th{font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+  .mt td{padding:7px 4px;border-bottom:1px dashed var(--line);color:var(--text);vertical-align:top}
+  .mt td.n{font-family:"IBM Plex Mono",monospace;color:var(--accent);white-space:nowrap;text-align:right}
+  .mt th.n{text-align:right}
 
   /* groceries */
   .gcat{font-family:"IBM Plex Mono",monospace;font-size:11px;text-transform:uppercase;letter-spacing:1px;
@@ -120,7 +124,7 @@
   .gitem{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);
     border-radius:12px;background:var(--surface2);margin:7px 0;cursor:pointer}
   .gitem .gtxt{flex:1;font-size:14px}
-  .gitem .gqty{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint)}
+  .gitem .gqty{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint);text-align:right}
   .gitem.checked .gtxt{color:var(--faint);text-decoration:line-through}
 
   /* weigh-in */
@@ -130,6 +134,51 @@
   .wi input{width:100%;margin-top:5px;background:var(--bg);border:1px solid var(--line);color:var(--text);
     border-radius:10px;padding:11px;font-family:"IBM Plex Mono",monospace;font-size:15px}
   .wi-last{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-top:10px}
+  .trend{margin-top:12px;padding:12px;border-radius:12px;background:var(--surface2);border:1px solid var(--line)}
+  .trend .big{font-family:"Bebas Neue",sans-serif;font-size:26px;letter-spacing:1px;line-height:1}
+  .trend .msg{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:6px}
+  .trend.ok .big{color:var(--accent)} .trend.warn .big{color:var(--gold)} .trend.hot .big{color:var(--hot)}
+
+  /* food log */
+  .fbig{display:flex;align-items:baseline;justify-content:space-between;margin-top:6px}
+  .fbig .left{font-family:"Bebas Neue",sans-serif;font-size:44px;letter-spacing:1px;line-height:1;color:var(--accent)}
+  .fbig .left.over{color:var(--hot)}
+  .fbig .of{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);text-align:right;line-height:1.5}
+  .bar{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden;margin:8px 0 4px}
+  .bar i{display:block;height:100%;width:0;transition:width .4s ease;background:linear-gradient(90deg,var(--accent-dim),var(--accent))}
+  .bar.p i{background:linear-gradient(90deg,#c9442c,var(--hot))}
+  .bar.over i{background:var(--hot)}
+  .mini{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+  .weekline{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--surface2);border:1px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.5}
+  .weekline b{color:var(--text)}
+  .qa{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  .qa button{background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:11px 8px;
+    font-family:"IBM Plex Sans";font-size:13px;font-weight:600;cursor:pointer;text-align:left;line-height:1.25}
+  .qa button small{display:block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--accent);font-weight:500;margin-top:2px}
+  .qa button.cam{border-color:rgba(205,255,58,.35);background:rgba(205,255,58,.08)}
+  .entry{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed var(--line)}
+  .entry .et{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--faint);width:40px;flex:0 0 auto}
+  .entry .en{flex:1;font-size:13.5px;min-width:0}
+  .entry .en small{display:block;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted)}
+  .entry .ek{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--accent);white-space:nowrap}
+  .entry .ex-del{background:none;border:1px solid var(--line);color:var(--faint);border-radius:8px;padding:4px 8px;font-size:11px;cursor:pointer}
+  .entry .ex-del.arm{color:var(--hot);border-color:var(--hot)}
+  .panel{margin-top:12px;padding:12px;border-radius:14px;border:1px solid rgba(205,255,58,.3);background:#14180f}
+  .panel h4{margin:0 0 8px;font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:1px}
+  .panel img{width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-bottom:8px}
+  .field{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px;font-size:14px;font-family:"IBM Plex Sans";margin:4px 0}
+  .row2{display:flex;gap:8px}
+  .row2 > *{flex:1}
+  .irow{display:grid;grid-template-columns:1fr 64px 58px;gap:6px;align-items:center;padding:6px 0;border-top:1px dashed var(--line);font-size:13px}
+  .irow input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px;font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+  .irow .k{font-family:"IBM Plex Mono",monospace;color:var(--accent);text-align:right;font-size:12px}
+  .irow small{display:block;color:var(--faint);font-size:11px}
+  .conf{font-family:"IBM Plex Mono",monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px}
+  .conf.low{color:var(--hot)} .conf.medium{color:var(--gold)} .conf.high{color:var(--accent)}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp 0.8s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .syncst{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:8px;color:var(--muted)}
+  .syncst.ok{color:var(--accent)} .syncst.err{color:var(--hot)}
 
   .btn{display:block;width:100%;text-align:center;background:var(--accent);color:#0b0c0e;border:none;
     border-radius:12px;padding:13px;font-weight:700;font-size:14px;cursor:pointer;font-family:"IBM Plex Sans"}
@@ -153,8 +202,8 @@
   <div class="brand">
     <h1>PRO<span>TOCOL</span></h1>
     <div style="text-align:right">
-      <div class="sub">Teja · 12-week</div>
-      <div class="phase" id="phaseTag">Phase 1 · Ease-in</div>
+      <div class="sub">Teja · 12-week cut</div>
+      <div class="phase" id="phaseTag">Week 1 · Ease-in</div>
     </div>
   </div>
 </header>
@@ -170,6 +219,7 @@
       </div>
       <span class="pill" id="todayPill"></span>
       <h2 id="todayTitle"></h2>
+      <div class="phasenote" id="phaseNote"></div>
       <div class="progwrap" id="todayProg">
         <div class="progbar"><i id="progFill"></i></div>
         <div class="progtxt" id="progText"></div>
@@ -179,34 +229,61 @@
     <div id="todayBody"></div>
 
     <div class="card" id="fuelCard">
-      <div class="sect" style="margin-top:0">Today's Fuel <small>Tue–Sun target · Mon runs lower (fast)</small></div>
-      <div class="macros">
-        <div class="macro kcal"><b>2050</b><span>kcal</span></div>
-        <div class="macro p"><b>160</b><span>protein g</span></div>
-        <div class="macro c"><b>215</b><span>carbs g</span></div>
-        <div class="macro f"><b>60</b><span>fat g</span></div>
+      <div class="sect" style="margin-top:0">Food <small id="fuelSub"></small></div>
+      <div class="fbig">
+        <div><div class="left" id="fLeft">—</div><div class="mini" style="margin-top:2px">kcal left today</div></div>
+        <div class="of" id="fOf"></div>
       </div>
-      <div class="tipnote">Eat rice <b>with</b> protein + veg, never alone — and take a 10–15 min walk after lunch &amp; dinner (your A1c lever). Full recipes in the Meals tab.</div>
+      <div class="bar" id="kBar"><i id="kFill"></i></div>
+      <div class="mini"><span id="kTxt"></span><span id="pTxt"></span></div>
+      <div class="bar p" id="pBar"><i id="pFill"></i></div>
+      <div class="mini"><span id="cTxt"></span><span id="ffTxt"></span></div>
+      <div class="weekline" id="weekLine"></div>
+
+      <div class="qa">
+        <button id="qaShake">＋ Shake<small>540 kcal · 52 g P</small></button>
+        <button id="qaMeal">＋ Prepped meal<small>680 kcal · 52 g P</small></button>
+        <button class="cam" id="qaPhoto">📷 Photo<small>estimate from a picture</small></button>
+        <button id="qaText">✎ Describe<small>"2 roti + dal + paneer"</small></button>
+      </div>
+      <button class="btn ghost" id="qaManual" style="margin-top:8px;padding:10px;font-size:13px">Enter numbers manually</button>
+      <input type="file" id="photoIn" accept="image/*" capture="environment" style="display:none">
+      <div id="foodPanel"></div>
+      <div id="entries" style="margin-top:10px"></div>
+      <div class="tipnote" id="fuelNote"></div>
     </div>
 
     <div class="card">
-      <div class="sect" style="margin-top:0">Weigh-in <small>Daily weight · weekly waist</small></div>
+      <div class="sect" style="margin-top:0">Weigh-in <small>Daily weight · waist every Sunday</small></div>
       <div class="wi">
         <div class="f"><label>Weight (kg)</label><input id="wWeight" type="number" inputmode="decimal" placeholder="—"></div>
         <div class="f"><label>Waist (cm)</label><input id="wWaist" type="number" inputmode="decimal" placeholder="—"></div>
       </div>
       <div class="wi-last" id="wiLast"></div>
-      <div class="tipnote">Read the <b>7-day average</b>, not single days. Flat scale + shrinking waist = recomp working.</div>
+      <div id="trendBox"></div>
+      <div class="tipnote">Weigh every morning after the bathroom, before water. Mon fast &amp; Sat cheat swing single days 1–2 kg — only the <b>7-day average</b> counts. Flat scale + shrinking waist + lifts going up = recomp working, change nothing.</div>
     </div>
 
     <div class="card">
-      <div class="sect" style="margin-top:0">Backup <small>your data lives on this device only</small></div>
+      <div class="sect" style="margin-top:0">Cloud sync <small>your AWS backend · photo estimates need this</small></div>
+      <input class="field" id="cfgUrl" placeholder="API URL (https://….on.aws)" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <input class="field" id="cfgToken" type="password" placeholder="API token" autocomplete="off">
+      <div class="row2" style="margin-top:6px">
+        <button class="btn" id="cfgSave">Save &amp; sync</button>
+        <button class="btn ghost" id="cfgOff">Disconnect</button>
+      </div>
+      <div class="syncst" id="syncSt"></div>
+      <div class="tipnote">Switching AWS accounts? Deploy there, paste the new URL + token here — everything on this phone uploads to the new account automatically.</div>
+    </div>
+
+    <div class="card">
+      <div class="sect" style="margin-top:0">Backup <small>a file copy of everything on this device</small></div>
       <div style="display:flex;gap:10px;margin-top:6px">
         <button class="btn" id="exportBtn" style="flex:1">Export</button>
         <button class="btn ghost" id="importBtn" style="flex:1">Import</button>
       </div>
       <input type="file" id="importFile" accept="application/json" style="display:none">
-      <div class="tipnote"><b>Do this weekly:</b> Export saves a backup file — drop it in iCloud/Files. Switching devices or clearing Safari? Import it back. This is your insurance until sync is added.</div>
+      <div class="tipnote"><b>Do this weekly:</b> Export saves a backup file — drop it in iCloud/Files. Switching devices or clearing Safari? Import it back.</div>
     </div>
   </div>
 </section>
@@ -224,7 +301,7 @@
 <!-- ===================== SHOP ===================== -->
 <section class="view" id="view-shop">
   <div class="wrap">
-    <div class="sect" style="margin-top:14px">Weekly Shop <small>Tap to check off · saved on this device</small></div>
+    <div class="sect" style="margin-top:14px">Weekly Shop <small>Tap to check off · amounts cover ~11 prepped meals</small></div>
     <div id="shopBody"></div>
     <button class="btn ghost" id="resetShop" style="margin:16px 0 8px">Reset checklist</button>
   </div>
@@ -240,131 +317,278 @@
 </nav>
 
 <script>
-/* ---------- storage (device-local, with graceful fallback) ---------- */
+/* ---------- storage ----------
+   localStorage is the fast local copy. Keys starting with "_" are device-only
+   (sync config, timestamps, queue). Every other key also syncs to the AWS
+   backend when Cloud sync is set up: write-through with an offline queue,
+   last-writer-wins per key by timestamp. */
 const mem={};
+const isLocal=k=>k.charAt(0)==='_';
 const DB={
   get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return k in mem?mem[k]:d}},
-  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){mem[k]=v}}
+  raw(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){mem[k]=v}},
+  rawStr(k){try{return localStorage.getItem(k)}catch(e){return k in mem?JSON.stringify(mem[k]):null}},
+  keys(){try{return Object.keys(localStorage)}catch(e){return Object.keys(mem)}},
+  set(k,v){this.raw(k,v);if(!isLocal(k))Sync.touch(k)}
+};
+
+const Sync={
+  _busy:false,_t:null,
+  cfg(){return DB.get('_cfg',null)},
+  on(){const c=this.cfg();return !!(c&&c.url&&c.token)},
+  ts(){return DB.get('_ts',{})},
+  syncable(k){return !isLocal(k)&&/^[A-Za-z0-9._:-]{1,200}$/.test(k)},
+  touch(k,at){const ts=this.ts();ts[k]=at||Date.now();DB.raw('_ts',ts);
+    const p=DB.get('_pending',{});p[k]=1;DB.raw('_pending',p);this.schedule()},
+  schedule(ms){clearTimeout(this._t);this._t=setTimeout(()=>this.flush(),ms==null?600:ms)},
+  async api(path,opt){
+    opt=opt||{};const c=this.cfg();
+    const ctl=new AbortController();const to=setTimeout(()=>ctl.abort(),opt.timeout||15000);
+    try{
+      return await fetch(c.url.replace(/\/+$/,'')+path,{method:opt.method||'GET',body:opt.body,signal:ctl.signal,
+        headers:{'Authorization':'Bearer '+c.token,'Content-Type':'application/json'}});
+    }finally{clearTimeout(to)}
+  },
+  status(kind,msg){
+    if(kind==='ok')DB.raw('_lastOk',Date.now());
+    this._last={kind,msg};renderSyncStatus();
+  },
+  applyRemote(rec){
+    const ts=this.ts();if((ts[rec.key]||0)>=rec.updatedAt)return false;
+    try{DB.raw(rec.key,JSON.parse(rec.value))}catch(e){return false}
+    ts[rec.key]=rec.updatedAt;DB.raw('_ts',ts);return true;
+  },
+  async flush(){
+    if(!this.on()||this._busy)return;
+    const pending=Object.keys(DB.get('_pending',{}));
+    if(!pending.length)return;
+    this._busy=true;let changed=false;
+    try{
+      for(const k of pending){
+        const at=this.ts()[k]||Date.now();const val=DB.rawStr(k);
+        if(val!=null){
+          const r=await this.api('/api/kv/'+encodeURIComponent(k),{method:'PUT',body:JSON.stringify({value:val,updatedAt:at})});
+          if(r.status===409){const j=await r.json();if(j.current&&this.applyRemote(j.current))changed=true}
+          else if(r.status===401)throw new Error('token rejected (401)');
+          else if(!r.ok)throw new Error('HTTP '+r.status);
+        }
+        const p=DB.get('_pending',{});if((this.ts()[k]||0)<=at)delete p[k];DB.raw('_pending',p);
+      }
+      this.status('ok');
+    }catch(e){this.status('err',e.name==='AbortError'?'timed out':e.message);this.schedule(30000)}
+    finally{this._busy=false}
+    if(changed)rerenderAll();
+  },
+  async pull(){
+    if(!this.on())return;
+    try{
+      const since=DB.get('_since',0);
+      const r=await this.api('/api/kv?since='+since);
+      if(r.status===401)throw new Error('token rejected (401)');
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const j=await r.json();let changed=false,max=since;
+      (j.items||[]).forEach(it=>{if(this.applyRemote(it))changed=true;if(it.updatedAt>max)max=it.updatedAt});
+      DB.raw('_since',max);this.status('ok');
+      if(changed)rerenderAll();
+    }catch(e){this.status('err',e.name==='AbortError'?'timed out':e.message)}
+  },
+  // First connect (or new account): merge both ways.
+  async connect(){
+    DB.raw('_since',0);
+    const r=await this.api('/api/whoami');
+    if(r.status===401)throw new Error('Token rejected');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const info=await r.json();
+    const all=await (await this.api('/api/kv')).json();
+    const remote={};(all.items||[]).forEach(it=>remote[it.key]=it.updatedAt);
+    await this.pull();
+    const ts=this.ts(),p=DB.get('_pending',{});
+    DB.keys().filter(k=>this.syncable(k)).forEach(k=>{
+      if(!ts[k])ts[k]=1; // legacy data: lose to any cloud copy, but upload if cloud has none
+      if(!(k in remote)||ts[k]>remote[k])p[k]=1;
+    });
+    DB.raw('_ts',ts);DB.raw('_pending',p);
+    await this.flush();
+    return info;
+  },
+  start(){
+    const c=this.cfg();
+    document.getElementById('cfgUrl').value=c&&c.url||'';
+    document.getElementById('cfgToken').value=c&&c.token||'';
+    renderSyncStatus();
+    if(!this.on())return;
+    this._started=true;
+    this.flush().then(()=>this.pull());
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){this.flush().then(()=>this.pull())}});
+    window.addEventListener('online',()=>this.flush());
+  }
+};
+
+function renderSyncStatus(){
+  const el=document.getElementById('syncSt');if(!el)return;
+  if(!Sync.on()){el.className='syncst';el.textContent='Not connected — data lives on this device only.';return}
+  const n=Object.keys(DB.get('_pending',{})).length, last=DB.get('_lastOk',0), l=Sync._last;
+  const ago=last?Math.max(0,Math.round((Date.now()-last)/60000)):null;
+  if(l&&l.kind==='err'){el.className='syncst err';el.textContent='Sync error: '+l.msg+(n?' · '+n+' change(s) queued':'')}
+  else{el.className='syncst ok';el.textContent='Connected · '+(ago==null?'syncing…':ago===0?'synced just now':'synced '+ago+' min ago')+(n?' · '+n+' queued':'')}
+}
+
+/* ---------- fuel targets ---------- */
+const FUEL={
+  regular:{k:1875,p:155,c:190,f:55,sub:'Regular day · shake + 2 prepped meals',
+    note:'Shake after the gym, then chicken + rice + veg + light curry for lunch &amp; dinner. Eat rice <b>with</b> protein + veg, never alone, and walk 10–15 min after lunch &amp; dinner.'},
+  monday:{k:900,p:50,c:100,f:30,sub:'Fast day · one meal at 8 pm',
+    note:'Water, black coffee/tea + a pinch of salt or zero-cal electrolytes. Break the fast protein-first: paneer tikka, dal + curd, chana or rajma + 1–2 roti. Light on protein? Add a whey shake.'},
+  saturday:{k:2500,p:150,c:250,f:85,sub:'Cheat-meal day · ~1,300 kcal for the cheat meal',
+    note:'Shake + one prepped meal + one planned Indian meal. One rich dish, built around protein (biryani + raita, or tandoori + dal + 1 naan). Dessert &amp; sweet drinks count inside the 1,300.'}
 };
 
 /* ---------- plan data ---------- */
-const REST={type:'rest',pill:'Rest day',pillClass:'rest',
+const CUFF={name:'Band cuff warm-up',scheme:'5 min',sets:0,note:'5 min easy cardio, band external rotations + pull-aparts, then 2 lighter ramp-up sets on the first lift.'};
+
+const MON={type:'rest',pill:'Fast + Rest',pillClass:'rest',fuel:'monday',
   title:'Fast / Rest',
-  blurb:'Fasting day. Keep it light — walk for your steps and do a few minutes of shoulder band work and mobility. Break the fast protein- and veg-forward, not with rice.',
+  blurb:'Water-only until 8 pm, then one protein-first vegetarian meal. Recovery day — walk, stretch, nothing hard.',
   items:[
-    {name:'Steps',scheme:'8–10k',sets:0,note:'Two 15-min walks ≈ 3,500 steps.'},
-    {name:'Shoulder band routine',scheme:'5 min',sets:0,note:'External rotations + scap squeezes — keep the cuff happy.'},
-    {name:'Mobility / stretch',scheme:'10 min',sets:0,note:'Hips and shoulders.'}
+    {name:'Water + electrolytes',scheme:'all day',sets:0,note:'Pinch of salt or a zero-cal electrolyte if you get headaches.'},
+    {name:'Steps',scheme:'8–10k',sets:0,note:'Easy walking only.'},
+    {name:'Mobility / stretch',scheme:'10 min',sets:0,note:'Hips, hamstrings, shoulders.'},
+    {name:'8 pm meal · protein first',scheme:'~900 kcal · 50 g+ P',sets:0,note:'Paneer tikka, dal + curd, chana or rajma + 1–2 roti. Skip fried snacks.'}
   ]};
-const SPORT={type:'sport',pill:'Cricket',pillClass:'sport',
-  title:'Cricket Day',
-  blurb:'Your sport IS your sprint, agility, plyo & rotational-power training. Warm up properly and respect the throwing progression.',
+const SUN={type:'rest',pill:'Rest + Prep',pillClass:'recov',fuel:'regular',
+  title:'Rest · Meal Prep',
+  blurb:'No lifting. Bank your steps, prep the week, and log your check-ins.',
   items:[
-    {name:'Pre-game warm-up',scheme:'10–15 min',sets:0,note:'Dynamic mobility + band cuff activation + a GRADUAL throwing build-up. Never go cold into hard throws.'},
-    {name:'Return-to-throw',scheme:'staged',sets:0,note:'Wk1–3: short throws ~50%. Wk3–6: build distance first, then intensity. Never both at once.'},
-    {name:'Bowling load',scheme:'ramp slowly',sets:0,note:'If bowling, increase deliveries gradually week to week. Workload spikes are the #1 injury cause. Sharp/next-day shoulder pain → drop back a stage.'}
-  ]};
-const RECOV={type:'recovery',pill:'Recovery',pillClass:'recov',
-  title:'Active Recovery',
-  blurb:'Recover from cricket. Easy effort only — this is not a workout.',
-  items:[
-    {name:'Easy cardio (LISS)',scheme:'30–40 min',sets:0,note:'Incline-treadmill walk or bike, conversational pace.'},
-    {name:'Long walk',scheme:'steps',sets:0,note:'Bank your step goal.'},
-    {name:'Mobility',scheme:'10 min',sets:0,note:'Shoulders + hips especially.'}
+    {name:'Waist at navel (relaxed)',scheme:'every Sunday',sets:0,note:'Log it in the Weigh-in card below.'},
+    {name:'Progress photos',scheme:'every 2 weeks',sets:0,note:'Same spot, light and time as your first set.'},
+    {name:'Steps',scheme:'8–10k',sets:0},
+    {name:'Meal prep',scheme:'curry base + rice + chicken',sets:0,note:'Cook a 4-serving curry base, portion chicken (200 g raw) and veg (200 g) + rice (~55 g raw) per meal.'}
   ]};
 
-const TUE={type:'lift',pill:'Lower + Core',pillClass:'',title:'Lower · Strength',
-  blurb:'Heavy here recovers in time for Friday cricket.',
+const UPA={type:'lift',pill:'Upper A',pillClass:'',fuel:'regular',title:'Chest + Shoulders',
+  blurb:'Upper chest and delts first — they show most in a suit. Finish every set with 1–2 good reps left.',
   items:[
-    {name:'Leg press',scheme:'4 × 8–10',sets:4},
-    {name:'DB Romanian deadlift',scheme:'3 × 10',sets:3,note:'Smith-machine RDL if no heavy DBs.'},
-    {name:'DB walking lunge / Bulgarian split squat',scheme:'3 × 10 / leg',sets:3},
-    {name:'Leg curl (machine)',scheme:'3 × 12',sets:3},
-    {name:'Calf raise',scheme:'4 × 15',sets:4},
-    {name:'Weighted bench / decline crunch',scheme:'3 × 12–15',sets:3,note:'Add weight over time — train abs like a muscle.'},
-    {name:'Band Pallof press',scheme:'3 × 12 / side',sets:3,note:'Anti-rotation — also protects the shoulder.'}
+    CUFF,
+    {name:'Incline DB press, 30°',scheme:'3 × 6–10 · rest 2–3 min',sets:3,note:'Or Smith incline. Start ~16–20 kg/hand.'},
+    {name:'One-arm DB row',scheme:'3 × 8–12 / side · 90 s',sets:3,note:'Or seated cable row. Start ~22–26 kg.'},
+    {name:'Seated DB shoulder press',scheme:'3 × 8–10 · 2 min',sets:3,note:'Start ~14–16 kg/hand.'},
+    {name:'Lat pulldown',scheme:'3 × 10–12 · 90 s',sets:3,note:'Normal grip. Start ~45–55 kg.'},
+    {name:'DB lateral raise',scheme:'4 × 12–20 · 60 s',sets:4,note:'Start ~6–8 kg. Add reps before weight — strict, no swinging.'},
+    {name:'Overhead DB triceps extension',scheme:'3 × 10–15 · 60 s',sets:3},
+    {name:'DB curl',scheme:'3 × 10–15 · 60 s',sets:3,note:'Start ~10–12 kg. Arm priority.'}
   ]};
-const WED={type:'lift',pill:'Push + Core',pillClass:'',title:'Push · Shoulder-Safe',
-  blurb:'Two days before throwing — enough recovery. Stop any pressing that pinches.',
+const LOA={type:'lift',pill:'Lower A',pillClass:'',fuel:'regular',title:'Quads',
+  blurb:'Chicken-legs fix, part 1. Full depth, controlled lowering.',
   items:[
-    {name:'Band external rotation (warm-up)',scheme:'2 × 15',sets:2,note:'+ scap push-ups.'},
-    {name:'Incline DB press (neutral/angled grip)',scheme:'4 × 8–10',sets:4},
-    {name:'Machine chest press / flat DB press',scheme:'3 × 10–12',sets:3},
-    {name:'Pec deck / band fly',scheme:'3 × 12–15',sets:3},
-    {name:'Machine shoulder press (neutral, light)',scheme:'3 × 10–12',sets:3,note:'Pain-free only. Skip if any pinch.'},
-    {name:'DB lateral raise (light, scapular plane)',scheme:'3 × 12–15',sets:3},
-    {name:'Triceps pushdown',scheme:'3 × 12',sets:3},
-    {name:'Overhead triceps extension',scheme:'3 × 12',sets:3},
-    {name:'Lying leg raise',scheme:'3 × 12–15',sets:3}
+    CUFF,
+    {name:'Back squat',scheme:'4 × 6–10 · rest 2–3 min',sets:4,note:'Start ~50–60 kg. Or goblet squat 8–12 reps (start ~24–28 kg).'},
+    {name:'Bulgarian split squat',scheme:'3 × 8–12 / leg · 90 s',sets:3},
+    {name:'Leg extension',scheme:'2 × 12–15 · 60 s',sets:2,note:'Or DB step-up.'},
+    {name:'Leg curl',scheme:'3 × 10–15 · 60 s',sets:3,note:'Or Swiss-ball curl.'},
+    {name:'Standing calf raise',scheme:'4 × 10–15 · 60 s',sets:4,note:'2 s pause at the bottom, full stretch. Thin calves need the pause.'},
+    {name:'Hanging knee raise',scheme:'3 × 10–15 · 60 s',sets:3}
   ]};
-const THU={type:'lift',pill:'Pull + Arms',pillClass:'',title:'Pull · Arms',
-  blurb:'Keep it moderate, not to failure — primes the shoulder for Friday.',
+const UPB={type:'lift',pill:'Upper B',pillClass:'',fuel:'regular',title:'Back + Width',
+  blurb:'V-taper day: lats, upper back, rear and side delts. Broader shoulders make the waist look smaller.',
   items:[
-    {name:'Lat pulldown (neutral grip)',scheme:'4 × 8–10',sets:4},
-    {name:'Seated cable / machine row (neutral)',scheme:'4 × 10',sets:4},
-    {name:'Single-arm DB row',scheme:'3 × 10 / side',sets:3},
-    {name:'Face pull',scheme:'3 × 15–20',sets:3,note:'Do these well — the key shoulder-health move.'},
-    {name:'Rear-delt fly',scheme:'3 × 15',sets:3},
-    {name:'DB curl',scheme:'3 × 10–12',sets:3,note:'Arm priority — your weak point.'},
-    {name:'Hammer curl',scheme:'3 × 12',sets:3},
-    {name:'Band Pallof press',scheme:'3 × 12 / side',sets:3},
-    {name:'Side plank',scheme:'3 × 30 s / side',sets:3}
+    CUFF,
+    {name:'Pull-ups',scheme:'3 × 6–10 · rest 2–3 min',sets:3,note:'Or heavy lat pulldown.'},
+    {name:'Flat DB bench press',scheme:'3 × 6–10 · 2–3 min',sets:3,note:'Start ~18–22 kg/hand.'},
+    {name:'Chest-supported DB row',scheme:'3 × 10–12 · 90 s',sets:3,note:'Chest on an incline bench.'},
+    {name:'Low-to-high cable fly',scheme:'3 × 12–15 · 60 s',sets:3,note:'Or incline DB fly. Upper-chest focus.'},
+    {name:'DB lateral raise',scheme:'4 × 12–20 · 60 s',sets:4},
+    {name:'Rear-delt fly',scheme:'3 × 15–20 · 60 s',sets:3,note:'DB or cable.'},
+    {name:'Hammer curl + triceps pushdown',scheme:'3 × 10–12 each · superset',sets:3,note:'One set of each = one round. Rest 60 s between rounds.'}
   ]};
-const SUN={type:'lift',pill:'Upper + Arms',pillClass:'',title:'Upper · Balanced',
-  blurb:'Shoulders recovered from Friday. Arm-focused finisher.',
+const SHA={type:'lift',pill:'Pump Day',pillClass:'',fuel:'regular',title:'Shoulders + Arms',
+  blurb:'Shorter pump day (~45 min). Light-to-moderate weights, chase the burn.',
   items:[
-    {name:'Band cuff warm-up',scheme:'2 × 15',sets:2},
-    {name:'Incline DB / machine press',scheme:'3 × 10',sets:3},
-    {name:'Lat pulldown / row',scheme:'3 × 10',sets:3},
-    {name:'DB lateral raise',scheme:'3 × 12–15',sets:3},
-    {name:'EZ/DB curl',scheme:'4 × 10',sets:4,note:'Arm priority.'},
-    {name:'Triceps pushdown',scheme:'4 × 10',sets:4},
-    {name:'Incline DB curl',scheme:'3 × 12',sets:3},
-    {name:'Close-grip press',scheme:'3 × 12',sets:3},
-    {name:'Weighted crunch',scheme:'3 × 15',sets:3},
-    {name:'Leg raise',scheme:'3 × 12',sets:3},
-    {name:'Cable/band woodchopper',scheme:'3 × 12 / side',sets:3}
+    CUFF,
+    {name:'Arnold press',scheme:'3 × 8–12 · 90 s',sets:3,note:'Or machine shoulder press.'},
+    {name:'DB lateral raise',scheme:'4 × 15–20 · 60 s',sets:4,note:'Last set: drop set.'},
+    {name:'Face pull',scheme:'3 × 15–20 · 60 s',sets:3,note:'Or band pull-apart.'},
+    {name:'Incline DB curl + overhead triceps ext',scheme:'4 × 10–12 each · superset',sets:4,note:'One set of each = one round.'},
+    {name:'Push-ups',scheme:'2 sets · stop 2 reps short',sets:2},
+    {name:'Ab wheel',scheme:'3 × 8–12 · 60 s',sets:3,note:'Or 45 s plank.'}
+  ]};
+const LOB={type:'lift',pill:'Lower B',pillClass:'',fuel:'saturday',title:'Hamstrings + Glutes',
+  blurb:'Chicken-legs fix, part 2. Earn the cheat meal.',
+  items:[
+    CUFF,
+    {name:'Romanian deadlift',scheme:'3 × 6–10 · rest 2–3 min',sets:3,note:'Barbell or DB (start ~20–24 kg/hand). Hips back, flat back.'},
+    {name:'Hip thrust',scheme:'3 × 8–12 · 2 min',sets:3,note:'Barbell or DB.'},
+    {name:'Walking lunge',scheme:'3 × 10 / leg · 90 s',sets:3},
+    {name:'Leg curl',scheme:'2 × 12–15 · 60 s',sets:2},
+    {name:'Standing calf raise',scheme:'4 × 10–15 · 60 s',sets:4,note:'2 s pause at the bottom.'},
+    {name:'Cable crunch',scheme:'3 × 10–15 · 60 s',sets:3,note:'Or decline crunch.'}
   ]};
 
 // 0=Sun ... 6=Sat
 const WEEK=[
   {day:'Sunday',s:SUN},
-  {day:'Monday',s:REST},
-  {day:'Tuesday',s:TUE},
-  {day:'Wednesday',s:WED},
-  {day:'Thursday',s:THU},
-  {day:'Friday',s:SPORT},
-  {day:'Saturday',s:RECOV}
+  {day:'Monday',s:MON},
+  {day:'Tuesday',s:UPA},
+  {day:'Wednesday',s:LOA},
+  {day:'Thursday',s:UPB},
+  {day:'Friday',s:SHA},
+  {day:'Saturday',s:LOB}
 ];
 
-/* ---------- date helpers ---------- */
+/* ---------- date + phase helpers ---------- */
 let offset=0;
 function curDate(){const d=new Date();d.setDate(d.getDate()+offset);return d}
-function keyOf(d){return d.toISOString().slice(0,10)}
+function keyOf(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dd}
 function exId(name){return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,28)}
+
+// 12-week cut started Thu 29 Oct 2026 (stored so it can be changed later)
+if(!DB.get('cutStart',null)) DB.set('cutStart','2026-10-29');
+function weekOf(d){
+  const p=DB.get('cutStart','2026-10-29').split('-').map(Number);
+  const s=new Date(p[0],p[1]-1,p[2]);
+  const day=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const days=Math.round((day-s)/864e5); // round: immune to DST hour shifts
+  return Math.floor(days/7)+1;
+}
+function phaseOf(wk){
+  if(wk<1) return {name:'Pre-start',note:''};
+  if(wk<=2) return {name:'Ease-in',note:'Weeks 1–2 after the break: 2 sets per exercise, stop 3–4 reps short, ~60–70% of old weights.'};
+  if(wk<=7) return {name:'Build',note:'Full sets. Compounds 1–2 reps short of failure; last isolation set 0–1 short. Top of range on all sets → go up next time.'};
+  if(wk===8) return {name:'Deload',note:'Deload week: half the sets, same weights. Come back fresh for the final push.'};
+  if(wk<=12) return {name:'Push',note:'Final block. Holding strength in a deficit is a win. Losing reps on several lifts → add 150 kcal.'};
+  return {name:'Maintain',note:'Cut done (~68 kg, ~13–15%). Calories to ~2,300–2,400 (rice to 90–100 g raw/meal). Mini-cut 4–6 weeks before the wedding.'};
+}
+function effSets(ex,wk){
+  if(ex.sets<=0) return 0;
+  if(wk>=1&&wk<=2) return Math.min(ex.sets,2);
+  if(wk===8) return Math.ceil(ex.sets/2);
+  return ex.sets;
+}
 
 /* ---------- render TODAY ---------- */
 function renderToday(){
   const d=curDate(), dow=d.getDay(), info=WEEK[dow], s=info.s;
-  const dateKey=keyOf(d);
+  const dateKey=keyOf(d), wk=weekOf(d), ph=phaseOf(wk);
   document.getElementById('dateLabel').textContent=
     d.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'}).toUpperCase()+(offset===0?' · TODAY':'');
   const pill=document.getElementById('todayPill');
   pill.textContent=s.pill; pill.className='pill '+(s.pillClass||'');
   document.getElementById('todayTitle').textContent=s.title;
+  document.getElementById('phaseNote').textContent=(s.type==='lift'&&ph.note)?('Week '+wk+' · '+ph.name+' — '+ph.note):'';
 
   const body=document.getElementById('todayBody');
   let html='<div class="card"><div class="note" style="font-size:13px;color:var(--muted);line-height:1.55;margin:0">'+s.blurb+'</div></div>';
   const log=DB.get('log-'+dateKey,{});
-  s.items.forEach((ex,i)=>{
+  s.items.forEach(ex=>{
     const id=exId(ex.name);
     const st=log[id]||{w:[],done:[]};
+    const n=effSets(ex,wk);
+    const scheme=(n>0&&n!==ex.sets)?(ex.scheme+' → '+n+' sets this week'):ex.scheme;
     html+='<div class="ex" data-ex="'+id+'">';
-    html+='<div class="top" onclick="toggleEx(this)"><div><div class="nm">'+ex.name+'</div><div class="scheme">'+ex.scheme+'</div></div><div class="chev">▶</div></div>';
+    html+='<div class="top" onclick="toggleEx(this)"><div><div class="nm">'+ex.name+'</div><div class="scheme">'+scheme+'</div></div><div class="chev">▶</div></div>';
     html+='<div class="body">';
     if(ex.note) html+='<div class="note">'+ex.note+'</div>';
-    if(ex.sets>0){
-      for(let k=0;k<ex.sets;k++){
+    if(n>0){
+      for(let k=0;k<n;k++){
         const w=st.w[k]||'', done=st.done[k]?'on':'';
         html+='<div class="setrow"><span class="sidx">Set '+(k+1)+'</span>'+
           '<input type="number" inputmode="decimal" placeholder="wt" value="'+w+'" oninput="logW(\''+dateKey+'\',\''+id+'\','+k+',this.value)"><span class="unit">kg</span>'+
@@ -378,7 +602,9 @@ function renderToday(){
     html+='</div></div>';
   });
   body.innerHTML=html;
-  document.getElementById('fuelCard').style.display=(s.type==='rest')?'none':'block';
+
+  renderFood();
+
   updateProg();
 
   // weigh-in
@@ -386,6 +612,7 @@ function renderToday(){
   document.getElementById('wWeight').value=wlog.weight||'';
   document.getElementById('wWaist').value=wlog.waist||'';
   showLastWeigh();
+  renderTrend();
 }
 
 function toggleEx(el){el.parentElement.classList.toggle('open')}
@@ -400,117 +627,370 @@ function logDone(dateKey,id,k,el){
   el.classList.toggle('on',st.done[k]); updateProg();
 }
 function updateProg(){
-  const d=curDate(), s=WEEK[d.getDay()].s;
+  const d=curDate(), s=WEEK[d.getDay()].s, wk=weekOf(d);
   const pw=document.getElementById('todayProg');
   if(s.type!=='lift'){pw.style.display='none';return} pw.style.display='block';
   const log=DB.get('log-'+keyOf(d),{}); let total=0,done=0;
-  s.items.forEach(ex=>{const n=ex.sets>0?ex.sets:1;total+=n;const st=log[exId(ex.name)];if(st)st.done.forEach(x=>{if(x)done++})});
+  s.items.forEach(ex=>{const n=effSets(ex,wk)||1;total+=n;const st=log[exId(ex.name)];
+    if(st)for(let k=0;k<n;k++){if(st.done[k])done++}});
   document.getElementById('progFill').style.width=(total?Math.round(done/total*100):0)+'%';
   document.getElementById('progText').textContent=done+' / '+total+' sets logged';
 }
 function saveWeigh(){
   const dateKey=keyOf(curDate());
   DB.set('weigh-'+dateKey,{weight:document.getElementById('wWeight').value,waist:document.getElementById('wWaist').value});
-  showLastWeigh();
+  showLastWeigh(); renderTrend();
 }
 function showLastWeigh(){
-  // find most recent weight in last 14 days
   let out='';
   for(let i=0;i<14;i++){const dd=new Date();dd.setDate(dd.getDate()-i);const w=DB.get('weigh-'+keyOf(dd),null);
     if(w&&w.weight){out='Last logged: '+w.weight+' kg'+(w.waist?' · '+w.waist+' cm waist':'')+(i?' ('+i+'d ago)':' (today)');break}}
   document.getElementById('wiLast').textContent=out;
+}
+function avgWeight(fromDaysAgo,toDaysAgo){
+  const v=[];
+  for(let i=fromDaysAgo;i<=toDaysAgo;i++){const dd=new Date();dd.setDate(dd.getDate()-i);
+    const w=DB.get('weigh-'+keyOf(dd),null); const x=w&&parseFloat(w.weight); if(x)v.push(x)}
+  return v.length>=3?v.reduce((a,b)=>a+b,0)/v.length:null;
+}
+function renderTrend(){
+  const box=document.getElementById('trendBox');
+  const a=avgWeight(0,6), b=avgWeight(7,13);
+  if(a==null){box.innerHTML='<div class="trend"><div class="msg">Log at least 3 weigh-ins this week to see your 7-day average.</div></div>';return}
+  if(b==null){box.innerHTML='<div class="trend"><div class="big">'+a.toFixed(1)+' kg</div><div class="msg">7-day average. Next week this card compares weeks and tells you whether to adjust.</div></div>';return}
+  const loss=b-a; // positive = losing
+  const wk=weekOf(new Date());
+  let cls='ok',msg='';
+  if(wk<=1) msg='Week 1 drop is mostly water and glycogen — ignore it.';
+  else if(loss>0.8){cls='hot';msg='Losing faster than 0.8 kg/wk. If this holds 2 weeks (or several lifts drop), add 150 kcal/day — rice back or a half-scoop of whey.'}
+  else if(loss>=0.4){cls='ok';msg='On target (0.4–0.7 kg/wk). Change nothing.'}
+  else if(loss>=0.3){cls='ok';msg='Slightly slow but fine. Check the waist before changing anything.'}
+  else {cls='warn';msg='Under 0.3 kg/wk. If the waist is also flat for 2 weeks, cut 150 kcal/day (~40 g less raw rice/day) or add 2,000 steps/day. If the waist is shrinking and lifts are up — you’re recomping, change nothing.'}
+  box.innerHTML='<div class="trend '+cls+'"><div class="big">'+a.toFixed(1)+' kg <span style="font-size:16px;color:var(--muted)">'+(loss>=0?'−':'+')+Math.abs(loss).toFixed(2)+' kg vs last week</span></div><div class="msg">'+msg+'</div></div>';
 }
 document.getElementById('wWeight').addEventListener('change',saveWeigh);
 document.getElementById('wWaist').addEventListener('change',saveWeigh);
 document.getElementById('prevDay').onclick=()=>{offset--;renderToday()};
 document.getElementById('nextDay').onclick=()=>{offset++;renderToday()};
 
+/* ---------- FOOD LOG ----------
+   Stored per day under "meals-YYYY-MM-DD" = [{id,t,name,kcal,p,c,f,src,items?}] */
+const QUICK={
+  shake:{name:'Post-gym shake',kcal:540,p:52,c:63,f:9},
+  meal:{name:'Prepped meal · chicken + rice + veg + curry',kcal:680,p:52,c:76,f:18}
+};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const r0=x=>Math.round(Number(x)||0);
+const fmt=n=>r0(n).toLocaleString();
+function fuelFor(d){return FUEL[WEEK[d.getDay()].s.fuel]||FUEL.regular}
+function mealsKey(d){return 'meals-'+keyOf(d)}
+function dayTotals(d){
+  return DB.get(mealsKey(d),[]).reduce((a,e)=>({kcal:a.kcal+r0(e.kcal),p:a.p+r0(e.p),c:a.c+r0(e.c),f:a.f+r0(e.f)}),{kcal:0,p:0,c:0,f:0});
+}
+function weekStart(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+
+function renderFood(){
+  const d=curDate(), f=fuelFor(d), t=dayTotals(d);
+  const left=f.k-t.kcal, over=left<0;
+  const L=document.getElementById('fLeft');
+  L.textContent=over?'+'+fmt(-left):fmt(left);L.className='left'+(over?' over':'');
+  L.nextElementSibling.textContent=over?'kcal over today':'kcal left today';
+  document.getElementById('fOf').innerHTML=fmt(t.kcal)+' eaten<br>target '+fmt(f.k);
+  document.getElementById('kFill').style.width=Math.min(100,t.kcal/f.k*100)+'%';
+  document.getElementById('kBar').className='bar'+(over?' over':'');
+  document.getElementById('kTxt').textContent=fmt(t.kcal)+' / '+fmt(f.k)+' kcal';
+  document.getElementById('pTxt').textContent='Protein '+t.p+' / '+f.p+' g';
+  document.getElementById('pFill').style.width=Math.min(100,t.p/f.p*100)+'%';
+  document.getElementById('cTxt').textContent='Carbs '+t.c+' / '+f.c+' g';
+  document.getElementById('ffTxt').textContent='Fat '+t.f+' / '+f.f+' g';
+  document.getElementById('fuelSub').textContent=f.sub;
+  document.getElementById('fuelNote').innerHTML=f.note;
+
+  // week (Mon–Sun)
+  const ws=weekStart(d), today=keyOf(d);let budget=0,eaten=0,planBefore=0,eatenBefore=0;
+  for(let i=0;i<7;i++){const x=new Date(ws);x.setDate(ws.getDate()+i);const tg=fuelFor(x).k, e=dayTotals(x).kcal;
+    budget+=tg;eaten+=e;if(keyOf(x)<today&&DB.get(mealsKey(x),[]).length){planBefore+=tg;eatenBefore+=e}}  // pace only over days you actually logged
+  const wl=budget-eaten;let pace='';
+  if(planBefore>0){const diff=eatenBefore-planBefore;
+    pace=Math.abs(diff)<=150?' · logged days on plan':diff<0?' · logged days '+fmt(-diff)+' under plan':' · <span style="color:var(--hot)">logged days '+fmt(diff)+' over plan</span>'}
+  document.getElementById('weekLine').innerHTML='<b>This week (Mon–Sun):</b> '+fmt(eaten)+' of '+fmt(budget)+' kcal · <b>'+(wl>=0?fmt(wl)+' left':fmt(-wl)+' over')+'</b>'+pace;
+
+  // entries
+  const list=DB.get(mealsKey(d),[]).slice().sort((a,b)=>a.t-b.t);
+  let h='';
+  list.forEach(e=>{
+    const tm=new Date(e.t).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+    h+='<div class="entry"><span class="et">'+esc(tm)+'</span><div class="en">'+esc(e.name)+
+      '<small>'+r0(e.p)+'P · '+r0(e.c)+'C · '+r0(e.f)+'F'+(e.src==='photo'?' · 📷':e.src==='text'?' · ✎':'')+'</small></div>'+
+      '<span class="ek">'+fmt(e.kcal)+'</span><button class="ex-del" data-id="'+esc(e.id)+'">✕</button></div>';
+  });
+  const el=document.getElementById('entries');
+  el.innerHTML=list.length?h:'<div class="tipnote" style="margin:0">Nothing logged for this day yet.</div>';
+  el.querySelectorAll('.ex-del').forEach(b=>b.onclick=()=>{
+    if(!b.classList.contains('arm')){b.classList.add('arm');b.textContent='Delete?';setTimeout(()=>{b.classList.remove('arm');b.textContent='✕'},3000);return}
+    const k=mealsKey(curDate());DB.set(k,DB.get(k,[]).filter(x=>x.id!==b.dataset.id));renderFood();
+  });
+}
+
+function addEntry(e){
+  const k=mealsKey(curDate());const list=DB.get(k,[]);
+  list.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:Date.now(),
+    name:e.name,kcal:r0(e.kcal),p:r0(e.p),c:r0(e.c),f:r0(e.f),src:e.src||'manual',items:e.items});
+  DB.set(k,list);closePanel();renderFood();
+}
+
+const panel=()=>document.getElementById('foodPanel');
+function closePanel(){panel().innerHTML=''}
+function needCloud(){
+  panel().innerHTML='<div class="panel"><h4>Cloud sync needed</h4><div class="tipnote" style="margin:0 0 10px">Photo and text estimates run on your AWS backend. Add the API URL + token in <b>Cloud sync</b> below, or enter numbers manually for now.</div><div class="row2"><button class="btn" id="pManual">Enter manually</button><button class="btn ghost" id="pX">Close</button></div></div>';
+  document.getElementById('pManual').onclick=showManual;document.getElementById('pX').onclick=closePanel;
+}
+function showManual(){
+  panel().innerHTML='<div class="panel"><h4>Manual entry</h4>'+
+    '<input class="field" id="mName" placeholder="What (e.g. Paneer tikka + 2 roti)">'+
+    '<div class="row2"><input class="field" id="mK" type="number" inputmode="numeric" placeholder="kcal"><input class="field" id="mP" type="number" inputmode="numeric" placeholder="protein g"></div>'+
+    '<div class="row2"><input class="field" id="mC" type="number" inputmode="numeric" placeholder="carbs g"><input class="field" id="mF" type="number" inputmode="numeric" placeholder="fat g"></div>'+
+    '<div class="row2" style="margin-top:6px"><button class="btn" id="mSave">Add</button><button class="btn ghost" id="pX">Cancel</button></div></div>';
+  document.getElementById('pX').onclick=closePanel;
+  document.getElementById('mSave').onclick=()=>{
+    const v=id=>document.getElementById(id).value;
+    if(!v('mK'))return document.getElementById('mK').focus();
+    addEntry({name:v('mName')||'Food',kcal:v('mK'),p:v('mP'),c:v('mC'),f:v('mF'),src:'manual'});
+  };
+}
+function resizeImage(file,max,q){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file),img=new Image();
+    img.onload=()=>{let w=img.naturalWidth,h=img.naturalHeight;const s=Math.min(1,max/Math.max(w,h));
+      w=Math.round(w*s);h=Math.round(h*s);const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(cv.toDataURL('image/jpeg',q))};
+    img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('Could not read that image'))};
+    img.src=url;
+  });
+}
+function showAsk(dataUrl){
+  panel().innerHTML='<div class="panel"><h4>'+(dataUrl?'Estimate from photo':'Describe what you ate')+'</h4>'+
+    (dataUrl?'<img src="'+dataUrl+'" alt="">':'')+
+    '<textarea class="field" id="aText" rows="2" placeholder="'+(dataUrl?'Optional: what it is / how much you ate (e.g. ate ¾, restaurant biryani)':'e.g. 2 roti, 1 bowl dal, 100 g paneer tikka')+'"></textarea>'+
+    '<div class="row2" style="margin-top:6px"><button class="btn" id="aGo">Estimate</button><button class="btn ghost" id="pX">Cancel</button></div>'+
+    '<div class="syncst" id="aSt"></div></div>';
+  document.getElementById('pX').onclick=closePanel;
+  document.getElementById('aGo').onclick=async()=>{
+    const text=document.getElementById('aText').value.trim();
+    if(!dataUrl&&!text)return document.getElementById('aText').focus();
+    const st=document.getElementById('aSt'),go=document.getElementById('aGo');
+    go.disabled=true;st.className='syncst';st.innerHTML='<span class="spin"></span>Estimating… (5–20 s)';
+    try{
+      const body={text};if(dataUrl){body.image=dataUrl.split(',')[1];body.format='jpeg'}
+      const r=await Sync.api('/api/analyze',{method:'POST',body:JSON.stringify(body),timeout:60000});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.message||j.error||('HTTP '+r.status));
+      showReview(j,dataUrl?'photo':'text');
+    }catch(e){go.disabled=false;st.className='syncst err';st.textContent='Failed: '+(e.name==='AbortError'?'timed out':e.message)}
+  };
+}
+function showReview(res,src){
+  const items=(res.items||[]).map(it=>({...it,g0:it.grams||0,g:it.grams||0}));
+  const tot=()=>items.reduce((a,it)=>{const s=it.g0?it.g/it.g0:1;return{kcal:a.kcal+it.kcal*s,p:a.p+it.p*s,c:a.c+it.c*s,f:a.f+it.f*s}},{kcal:0,p:0,c:0,f:0});
+  let h='<div class="panel"><h4>Check the estimate</h4>'+
+    '<input class="field" id="rName" value="'+esc(res.name||'Meal')+'">'+
+    '<div class="irow" style="border-top:none;color:var(--faint);font-family:IBM Plex Mono;font-size:10px;text-transform:uppercase"><span>item</span><span>grams</span><span style="text-align:right">kcal</span></div>';
+  items.forEach((it,i)=>{h+='<div class="irow"><div>'+esc(it.name)+(it.assumption?'<small>'+esc(it.assumption)+'</small>':'')+'</div>'+
+    '<input type="number" inputmode="numeric" data-i="'+i+'" value="'+it.g+'"><div class="k" id="rk'+i+'">'+fmt(it.kcal)+'</div></div>'});
+  h+='<div class="mini" style="margin-top:8px"><span id="rTot"></span><span class="conf '+esc(res.confidence)+'">'+esc(res.confidence||'')+' confidence</span></div>'+
+    (res.notes?'<div class="tipnote" style="margin:8px 0 0">'+esc(res.notes)+'</div>':'')+
+    '<div class="tipnote" style="margin:6px 0 0">Adjust grams if the portion looks off — sauces and oil are the usual misses.</div>'+
+    '<div class="row2" style="margin-top:10px"><button class="btn" id="rSave">Add to today</button><button class="btn ghost" id="pX">Discard</button></div></div>';
+  panel().innerHTML=h;
+  const upd=()=>{items.forEach((it,i)=>{const s=it.g0?it.g/it.g0:1;document.getElementById('rk'+i).textContent=fmt(it.kcal*s)});
+    const t=tot();document.getElementById('rTot').textContent=fmt(t.kcal)+' kcal · '+r0(t.p)+'P · '+r0(t.c)+'C · '+r0(t.f)+'F'};
+  panel().querySelectorAll('.irow input').forEach(inp=>inp.oninput=()=>{items[+inp.dataset.i].g=Number(inp.value)||0;upd()});
+  upd();
+  document.getElementById('pX').onclick=closePanel;
+  document.getElementById('rSave').onclick=()=>{
+    const t=tot();
+    addEntry({name:document.getElementById('rName').value||res.name||'Meal',kcal:t.kcal,p:t.p,c:t.c,f:t.f,src,
+      items:items.map(it=>{const s=it.g0?it.g/it.g0:1;return{name:it.name,grams:r0(it.g),kcal:r0(it.kcal*s),p:r0(it.p*s),c:r0(it.c*s),f:r0(it.f*s)}})});
+  };
+}
+document.getElementById('qaShake').onclick=()=>addEntry({...QUICK.shake,src:'quick'});
+document.getElementById('qaMeal').onclick=()=>addEntry({...QUICK.meal,src:'quick'});
+document.getElementById('qaManual').onclick=showManual;
+document.getElementById('qaText').onclick=()=>Sync.on()?showAsk(null):needCloud();
+document.getElementById('qaPhoto').onclick=()=>Sync.on()?document.getElementById('photoIn').click():needCloud();
+document.getElementById('photoIn').onchange=async(e)=>{
+  const file=e.target.files[0];e.target.value='';if(!file)return;
+  try{showAsk(await resizeImage(file,1024,0.8))}catch(err){panel().innerHTML='<div class="panel"><div class="syncst err">'+esc(err.message)+'</div></div>'}
+};
+
+/* ---------- cloud sync settings ---------- */
+document.getElementById('cfgSave').onclick=async()=>{
+  const url=document.getElementById('cfgUrl').value.trim(), token=document.getElementById('cfgToken').value.trim();
+  const st=document.getElementById('syncSt');
+  if(!/^https?:\/\//.test(url)||!token){st.className='syncst err';st.textContent='Enter the API URL (https://…) and token.';return}
+  DB.raw('_cfg',{url,token});DB.raw('_lastOk',0);
+  st.className='syncst';st.innerHTML='<span class="spin"></span>Connecting and merging…';
+  try{const info=await Sync.connect();if(!Sync._started)Sync.start()
+    renderSyncStatus();st.textContent+=' · '+(info.region||'')+' · '+(info.model||'');rerenderAll()}
+  catch(e){Sync.status('err',e.name==='AbortError'?'timed out':e.message)}
+};
+document.getElementById('cfgOff').onclick=()=>{try{localStorage.removeItem('_cfg')}catch(e){delete mem._cfg}Sync._last=null;renderSyncStatus()};
+
 /* ---------- render WEEK ---------- */
 function renderWeek(){
-  let html='<div class="sect" style="margin-top:14px">The Week <small>Mon fast · Fri cricket · built around recovery</small></div>';
-  const order=[2,3,4,5,6,0,1]; // Tue..Mon for reading flow
+  let html='<div class="sect" style="margin-top:14px">The Week <small>5 lifting days · Mon fast · Sat cheat meal · Sun prep</small></div>';
+  const order=[2,3,4,5,6,0,1]; // Tue..Mon
   order.forEach(i=>{
-    const w=WEEK[i], s=w.s;
-    html+='<div class="card tight"><div class="top" style="display:flex;justify-content:space-between;align-items:center;padding:15px 16px;cursor:pointer" onclick="this.parentElement.classList.toggle(\'open\')">';
-    html+='<div><div style="font-family:\'Bebas Neue\';font-size:24px;letter-spacing:1px">'+w.day+'</div>'+
+    const w=WEEK[i], s=w.s, f=FUEL[s.fuel]||FUEL.regular;
+    html+='<div class="card tight"><div class="top" style="display:flex;justify-content:space-between;align-items:center;padding:15px 16px;cursor:pointer">';
+    html+='<div><div style="font-family:\'Bebas Neue\';font-size:24px;letter-spacing:1px">'+w.day+' <span style="font-family:\'IBM Plex Mono\';font-size:11px;color:var(--faint);letter-spacing:0">~'+f.k.toLocaleString()+' kcal</span></div>'+
       '<span class="pill '+(s.pillClass||'')+'" style="margin-top:4px">'+s.pill+' · '+s.title+'</span></div>';
     html+='<div class="chev" style="color:var(--faint)">▶</div></div>';
     html+='<div class="body" style="display:none;padding:0 16px 14px"><div class="note" style="font-size:12.5px;color:var(--muted);margin:0 0 8px">'+s.blurb+'</div><ul style="margin:0;padding-left:18px">';
     s.items.forEach(ex=>{html+='<li style="font-size:13.5px;line-height:1.7"><b style="color:var(--text)">'+ex.name+'</b> <span style="font-family:\'IBM Plex Mono\';color:var(--accent);font-size:12px">'+ex.scheme+'</span></li>'});
     html+='</ul></div></div>';
   });
+  html+=`<div class="card meal">
+    <h3>Weekly volume · priority areas</h3>
+    <ul>
+      <li>Side delts <b>~12</b> direct sets + pressing</li>
+      <li>Chest <b>~11</b> · Upper back <b>~12</b> + rear delts 6</li>
+      <li>Biceps <b>~10</b> · Triceps <b>~10</b></li>
+      <li>Quads <b>~12</b> · Calves <b>8</b></li>
+    </ul>
+    <div class="method"><b>Progression:</b> top of the rep range on every set with clean form → next session go up (next DB, +2.5 kg barbell upper, +5 kg barbell lower), then work back up the range. Raises &amp; rear delts: add reps before weight.<br><b>Deload:</b> week 8, or whenever lifts stall 2 weeks running.</div>
+  </div>`;
   document.getElementById('weekBody').innerHTML=html;
   document.querySelectorAll('#view-week .card.tight .top').forEach(t=>{
-    t.addEventListener('click',()=>{const b=t.nextElementSibling;const open=t.parentElement.classList.contains('open');
-      b.style.display=open?'block':'none';t.querySelector('.chev').style.transform=open?'rotate(90deg)':'none'});
+    t.addEventListener('click',()=>{const card=t.parentElement;card.classList.toggle('open');const open=card.classList.contains('open');
+      t.nextElementSibling.style.display=open?'block':'none';t.querySelector('.chev').style.transform=open?'rotate(90deg)':'none'});
   });
 }
 
 /* ---------- MEALS ---------- */
 const MEALS_HTML=`
-<div class="sect" style="margin-top:14px">Daily Template <small>repeat across the week</small></div>
+<div class="sect" style="margin-top:14px">Targets <small>weekly budget ~12,800 kcal · ~0.5 kg/week</small></div>
 <div class="card meal">
-  <h3>① Breakfast — Optimized Smoothie</h3><div class="kc">~420 kcal · ~40 g protein</div>
+  <table class="mt">
+    <tr><th>Day</th><th class="n">kcal</th><th class="n">P</th><th class="n">F</th><th class="n">C</th></tr>
+    <tr><td>Mon · fast + 1 meal</td><td class="n">~900</td><td class="n">50+</td><td class="n">30</td><td class="n">100</td></tr>
+    <tr><td>Tue–Fri, Sun</td><td class="n">~1,875</td><td class="n">155</td><td class="n">55</td><td class="n">190</td></tr>
+    <tr><td>Sat · cheat meal</td><td class="n">~2,500</td><td class="n">150</td><td class="n">85</td><td class="n">250</td></tr>
+  </table>
+  <div class="method">Maintenance is ~2,400–2,500. The budget is weekly — the lean Monday pays for the bigger Saturday.</div>
+</div>
+
+<div class="sect">Daily Template <small>Tue–Sun</small></div>
+<div class="card meal">
+  <h3>① Post-gym Shake</h3><div class="kc">~540 kcal · ~52 g protein</div>
   <ul>
-    <li><b>1 scoop</b> whey protein</li>
-    <li><b>100 g</b> non-fat Greek yogurt</li>
-    <li><b>1 cup</b> frozen mixed berries</li>
-    <li><b>½</b> banana (frozen)</li>
+    <li><b>1</b> banana</li>
+    <li><b>250 ml</b> unsweetened almond milk</li>
+    <li><b>150 g</b> non-fat Greek yogurt</li>
+    <li><b>1 scoop</b> whey (30 g)</li>
+    <li><b>10 g</b> collagen</li>
     <li><b>1 tbsp</b> chia seeds</li>
-    <li><b>1 cup</b> unsweetened almond milk</li>
-    <li><b>1 scoop</b> collagen (optional · joint support)</li>
-    <li><b>1 tsp</b> each maca + moringa</li>
+    <li><b>150 g</b> strawberries + blueberries</li>
+    <li><b>5 g</b> maca + <b>3 g</b> moringa</li>
   </ul>
-  <div class="method">Blend 30–45s. Dropped vs your old recipe: oats, peanut butter, almonds, whole milk — that's the ~600 kcal you're saving.</div>
+  <div class="method">Collagen doesn’t build muscle like whey — don’t count on it toward 150 g. Optional upgrade: swap it for a half-scoop of whey.</div>
 </div>
 
 <div class="card meal">
-  <h3>②③ Lunch &amp; Dinner — Build-a-Plate</h3><div class="kc">~550–650 kcal each · pick a protein</div>
-  <div class="variants">
-    <span class="vchip on">Chicken</span><span class="vchip">Salmon</span><span class="vchip">Eggs</span><span class="vchip">Paneer</span>
-  </div>
-  <ul>
-    <li><b>Rice</b> — 150 g cooked basmati/brown (≈ ½ cup dry). Plate it, put the pot away.</li>
-    <li><b>Protein</b> — chicken 150–180 g · salmon 120–150 g · eggs 3 · paneer 80–100 g</li>
-    <li><b>Veg</b> — 150–200 g Costco mixed veg, stirred into the curry + piled on the side</li>
-    <li><b>Oil</b> — measured 1 tbsp per dish (not a free pour)</li>
-  </ul>
-  <div class="method"><b>Quick chicken curry:</b> brown onion + ginger-garlic in 1 tbsp oil, add tomato + turmeric/cumin/garam masala/chili, add diced chicken, simmer ~15 min, stir in mixed veg for the last 5. Serve over the measured rice.<br><br><b>Rule:</b> always eat rice WITH protein + veg + fat (never alone), then walk 10–15 min after. That's your A1c lever.</div>
+  <h3>②③ Lunch &amp; Dinner</h3><div class="kc">~680 kcal each with curry · ~52 g protein</div>
+  <table class="mt">
+    <tr><th>Item</th><th class="n">kcal</th><th class="n">P</th></tr>
+    <tr><td>Chicken thigh, 200 g raw, air-fried</td><td class="n">240</td><td class="n">39 g</td></tr>
+    <tr><td>Marinade (yogurt, spices, ~1 tsp oil)</td><td class="n">60</td><td class="n">2 g</td></tr>
+    <tr><td>Rice, ~55 g raw</td><td class="n">200</td><td class="n">4 g</td></tr>
+    <tr><td>Costco frozen mixed veg, 200 g, sautéed</td><td class="n">130</td><td class="n">6 g</td></tr>
+    <tr><td>Light curry, 1 serving</td><td class="n">50</td><td class="n">1 g</td></tr>
+  </table>
+  <div class="method">Rice + veg together come to ~330 g cooked. Weigh the dry rice once to confirm ~55 g. Sauté oil counts: 1 tsp ≈ 40 kcal.<br><br><b>Rule:</b> always eat rice WITH protein + veg (never alone), then walk 10–15 min after.</div>
 </div>
 
 <div class="card meal">
-  <h3>Snacks — pick 1–2/day</h3><div class="kc">for the long coding blocks</div>
+  <h3>Light Curry Base</h3><div class="kc">4 servings · ~50 kcal each</div>
   <ul>
-    <li>Greek yogurt + cinnamon · roasted chana · 2 boiled eggs</li>
-    <li>Whey in water · apple + string cheese</li>
-    <li>Cucumber/carrot + hummus · black coffee / green tea</li>
+    <li><b>2 tsp</b> oil or ghee</li>
+    <li><b>2</b> onions · <b>3</b> tomatoes · <b>1 tbsp</b> ginger-garlic paste</li>
+    <li>Chilli, turmeric, coriander, garam masala, kasuri methi</li>
+    <li>Optional: <b>100 g</b> Greek yogurt stirred in off the heat</li>
   </ul>
+  <div class="method">Cook once, use for 4 meals. Toss the air-fried chicken in it for 2 minutes.</div>
+</div>
+
+<div class="card meal">
+  <h3>Protein Swaps</h3><div class="kc">instead of 200 g chicken thigh</div>
+  <table class="mt">
+    <tr><th>Swap</th><th class="n">kcal</th><th class="n">P</th><th>Adjust</th></tr>
+    <tr><td>Chicken breast, 200 g raw</td><td class="n">240</td><td class="n">45 g</td><td>none</td></tr>
+    <tr><td>Shrimp, 220 g raw</td><td class="n">190</td><td class="n">44 g</td><td>none</td></tr>
+    <tr><td>Salmon, 180 g raw</td><td class="n">375</td><td class="n">36 g</td><td>half the rice (~30 g raw)</td></tr>
+  </table>
+</div>
+
+<div class="sect">Monday <small>fast until 8 pm</small></div>
+<div class="card meal">
+  <h3>8 pm Meal · protein first</h3><div class="kc">~900 kcal · 50 g+ protein</div>
+  <ul>
+    <li>Paneer tikka · dal + curd · chana or rajma</li>
+    <li><b>1–2</b> roti</li>
+    <li>Light on protein? Add a whey shake.</li>
+    <li style="color:var(--faint)">Skip samosas/pakoras — calories with almost no protein.</li>
+  </ul>
+</div>
+
+<div class="sect">Saturday Cheat Meal <small>~1,300 kcal budget</small></div>
+<div class="card meal">
+  <table class="mt">
+    <tr><th>Restaurant dish (approx.)</th><th class="n">kcal</th></tr>
+    <tr><td>Tandoori chicken, half</td><td class="n">400–500</td></tr>
+    <tr><td>Masala dosa</td><td class="n">400–600</td></tr>
+    <tr><td>Dal makhani, 1 bowl</td><td class="n">400–600</td></tr>
+    <tr><td>Chicken biryani, restaurant plate</td><td class="n">900–1,400</td></tr>
+    <tr><td>Butter chicken + 2 butter naan</td><td class="n">1,300–1,600</td></tr>
+  </table>
+  <ul>
+    <li>One rich dish, built around protein — biryani + raita, or tandoori + dal + 1 naan.</li>
+    <li>Dessert &amp; sweet drinks count <b>inside</b> the 1,300.</li>
+    <li>Eating out Sunday too? Grilled/tandoori + dal + 1 roti (~700), not a second cheat.</li>
+  </ul>
+</div>
+
+<div class="sect">Adjust <small>judge every 2 weeks by 7-day averages</small></div>
+<div class="card meal">
+  <table class="mt">
+    <tr><th>What you see (2 weeks)</th><th>Do</th></tr>
+    <tr><td>−0.4 to −0.7 kg/wk, waist shrinking</td><td>Nothing</td></tr>
+    <tr><td>Under −0.3 kg/wk, waist flat</td><td>−150 kcal/day (~40 g less raw rice/day) or +2,000 steps</td></tr>
+    <tr><td>Over −0.8 kg/wk, or lifts dropping</td><td>+150 kcal/day</td></tr>
+    <tr><td>Weight flat, waist down, lifts up</td><td>Nothing — recomping</td></tr>
+  </table>
+  <div class="method"><b>After week 12</b> (~68 kg, ~13–15%): maintenance ~2,300–2,400 — rice back to 90–100 g raw/meal, same training. Once the wedding date is set: 4–6 week mini-cut at ~1,800, finishing a few days before.</div>
 </div>
 
 <div class="card meal">
   <h3>Supplements</h3>
   <ul>
     <li><b>Creatine</b> 5 g/day · any time</li>
-    <li><b>L-citrulline</b> 1.5–3 g pre-workout (optional)</li>
-    <li><b>Maca</b> — already in the smoothie</li>
+    <li><b>Maca + moringa</b> — already in the shake</li>
+    <li><b>Electrolytes</b> (zero-cal) — Monday fast</li>
     <li><b>Vitamin D</b> — get a level tested first, then dose to result</li>
-    <li style="color:var(--faint)">Skip "test boosters" — your T is normal.</li>
   </ul>
 </div>`;
 function renderMeals(){
   document.getElementById('mealsBody').innerHTML=MEALS_HTML;
-  document.querySelectorAll('.vchip').forEach(c=>c.addEventListener('click',()=>{
-    document.querySelectorAll('.vchip').forEach(x=>x.classList.remove('on'));c.classList.add('on')}));
 }
 
-/* ---------- GROCERIES ---------- */
+/* ---------- GROCERIES (≈11 prepped meals + 7 shakes) ---------- */
 const GROCERIES={
-  'Protein':[['Chicken breast/thigh','~1 kg'],['Salmon fillets','2'],['Eggs','1 dozen'],['Paneer','~250 g'],['Non-fat Greek yogurt','large tub'],['Whey protein','—'],['String cheese','pack']],
-  'Grains':[['Basmati or brown rice','—'],['Rolled oats (optional)','—']],
-  'Produce & Veg':[['Costco frozen mixed veg','bag'],['Frozen mixed berries','bag'],['Bananas','small bunch'],['Onions / tomatoes','—'],['Ginger + garlic','—'],['Cucumber / carrots / greens','—'],['Lemons','few']],
-  'Fats':[['Olive oil','—'],['Mixed nuts','small bag'],['Chia seeds','—']],
-  'Pantry & Extras':[['Unsweetened almond milk','—'],['Roasted chana','—'],['Hummus','—'],['Maca + moringa','—'],['Collagen','—'],['Spices (turmeric, cumin, garam masala, chili)','—']],
-  'Supplements':[['Creatine monohydrate','—'],['L-citrulline (optional)','—'],['Vitamin D (after testing)','—']]
+  'Protein':[['Boneless skinless chicken thighs','~2.2 kg'],['Shrimp or salmon (swap nights)','optional'],['Non-fat Greek yogurt','~1.3 kg'],['Whey protein','7+ scoops'],['Collagen','7 × 10 g'],['Paneer (Monday)','~200 g']],
+  'Grains':[['Basmati rice','~650 g'],['Roti / atta (Monday)','—']],
+  'Produce & Veg':[['Costco frozen mixed veg','~2.2 kg'],['Bananas','7'],['Strawberries + blueberries','~1 kg'],['Onions','6'],['Tomatoes','9'],['Ginger-garlic paste','1 jar'],['Lemons / coriander','few']],
+  'Fats':[['Oil or ghee','—'],['Chia seeds','~85 g']],
+  'Pantry & Extras':[['Unsweetened almond milk','~1.75 L'],['Maca + moringa','—'],['Spices (turmeric, chilli, coriander, garam masala, kasuri methi)','—'],['Zero-cal electrolytes','Mon']],
+  'Supplements':[['Creatine monohydrate','—'],['Vitamin D (after testing)','—']]
 };
 function renderShop(){
   const checked=DB.get('shop',{}); let html='';
@@ -539,17 +1019,14 @@ document.querySelectorAll('nav button').forEach(b=>{
 });
 
 /* ---------- phase tag ---------- */
-(function(){
-  const start=DB.get('startDate',null);
-  if(!start){DB.set('startDate',keyOf(new Date()))}
-  const s=new Date(DB.get('startDate'));const wk=Math.floor((new Date()-s)/6048e5)+1;
-  let p='Phase 1 · Ease-in';
-  if(wk>=3&&wk<=6)p='Phase 2 · Build';else if(wk>=7&&wk<=9)p='Phase 3 · Push';else if(wk>=10)p='Phase 4 · Peak';
-  document.getElementById('phaseTag').textContent=(wk>=1&&wk<=14?'Week '+wk+' · ':'')+p;
-})();
+function renderPhaseTag(){
+  const wk=weekOf(new Date()), ph=phaseOf(wk);
+  document.getElementById('phaseTag').textContent=(wk>=1&&wk<=12?'Week '+wk+' · ':'')+ph.name;
+}
 
 /* ---------- backup: export / import ---------- */
-function dumpAll(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);o[k]=localStorage.getItem(k)}}catch(e){Object.keys(mem).forEach(k=>o[k]=JSON.stringify(mem[k]))}return o}
+// Device-only keys (sync config incl. token, queue) are never exported.
+function dumpAll(){const o={};DB.keys().filter(k=>!isLocal(k)).forEach(k=>{o[k]=DB.rawStr(k)});return o}
 document.getElementById('exportBtn').onclick=()=>{
   const blob=new Blob([JSON.stringify({app:'protocol',exported:new Date().toISOString(),data:dumpAll()},null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
@@ -562,14 +1039,16 @@ document.getElementById('importFile').onchange=(e)=>{
     const parsed=JSON.parse(r.result);const data=parsed.data||parsed;
     if(!data||typeof data!=='object')throw 0;
     if(!confirm('Import backup and overwrite current data on this device?'))return;
-    Object.keys(data).forEach(k=>{try{localStorage.setItem(k,data[k])}catch(_){mem[k]=JSON.parse(data[k])}});
-    renderToday();renderShop();alert('Backup restored.');
-  }catch(err){alert('That file doesn\u2019t look like a valid backup.')}};
+    Object.keys(data).filter(k=>!isLocal(k)).forEach(k=>{try{DB.raw(k,JSON.parse(data[k]));if(Sync.syncable(k))Sync.touch(k)}catch(_){}});
+    rerenderAll();alert('Backup restored'+(Sync.on()?' — uploading to the cloud.':'.'));
+  }catch(err){alert('That file doesn’t look like a valid backup.')}};
   r.readAsText(f);e.target.value='';
 };
 
 /* ---------- init ---------- */
-renderToday();renderWeek();renderMeals();renderShop();
+function rerenderAll(){renderPhaseTag();renderToday();renderShop();renderSyncStatus()}
+renderPhaseTag();renderToday();renderWeek();renderMeals();renderShop();
+Sync.start();
 </script>
 </body>
 </html>

@@ -1,0 +1,23 @@
+{
+  "name": "protocol-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PROTOCOL backend: Lambda Web Function (Hono) + DynamoDB + Bedrock",
+  "scripts": {
+    "dev": "STORE=memory MOCK_AI=1 API_TOKEN=dev ALLOWED_ORIGINS=* AWS_LAMBDA_HTTP_ENDPOINT=127.0.0.1:3000 node src/index.js",
+    "build": "esbuild src/index.js --bundle --platform=node --target=node24 --format=esm --outfile=dist/index.mjs --banner:js=\"import{createRequire}from'module';const require=createRequire(import.meta.url);\" && echo \"import './index.mjs';\" > dist/index.js && echo '{\"type\":\"module\"}' > dist/package.json",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1161.0",
+    "@aws-sdk/client-dynamodb": "^3.1161.0",
+    "@aws-sdk/client-secrets-manager": "^3.1161.0",
+    "@aws-sdk/lib-dynamodb": "^3.1161.0",
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.14"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}

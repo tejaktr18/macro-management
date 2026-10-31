@@ -1,0 +1,60 @@
+# Deploys backend/ to AWS with short-lived OIDC credentials.
+# - Push to main touching backend/** -> deploys to the "isengard" environment.
+# - Actions tab -> "Deploy backend" -> Run workflow -> pick any environment.
+# Each GitHub environment (Settings -> Environments) holds one account's
+# variables: AWS_DEPLOY_ROLE_ARN, CFN_EXEC_ROLE_ARN, AWS_REGION, and optional
+# APP_NAME, MODEL_ID, ALLOWED_ORIGINS.
+name: Deploy backend
+
+on:
+  push:
+    branches: [main]
+    paths: ['backend/**', '.github/workflows/deploy-backend.yml']
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target AWS account (GitHub environment)
+        type: choice
+        options: [isengard, personal]
+        default: isengard
+
+permissions:
+  id-token: write   # OIDC token for AWS
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.environment || 'isengard' }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: npm, cache-dependency-path: backend/package-lock.json }
+      - run: npm ci
+      - run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'isengard' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: npm, cache-dependency-path: backend/package-lock.json }
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Deploy
+        env:
+          CI: 'true'
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          APP_NAME: ${{ vars.APP_NAME || 'protocol' }}
+          MODEL_ID: ${{ vars.MODEL_ID || 'us.anthropic.claude-sonnet-5-5' }}
+          ALLOWED_ORIGINS: ${{ vars.ALLOWED_ORIGINS || 'https://tejaktr18.github.io' }}
+          CFN_EXEC_ROLE_ARN: ${{ vars.CFN_EXEC_ROLE_ARN }}
+        run: ./backend/deploy.sh ${{ inputs.environment || 'isengard' }}
