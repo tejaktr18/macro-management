@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../src/app.js';
 import { memoryStore } from '../src/store.js';
-import { mockAnalyzer, normalize } from '../src/analyze.js';
+import { mockAnalyzer, normalize, parseModelOutput } from '../src/analyze.js';
 
 const app = createApp({ store: memoryStore(), analyze: mockAnalyzer(), getToken: async () => 'secret' });
 const auth = { Authorization: 'Bearer secret', 'Content-Type': 'application/json' };
@@ -52,4 +52,11 @@ test('normalize tolerates sloppy model output', () => {
   const n = normalize({ items: [{ name: 'x', grams: '100.4', kcal: '200.6', protein_g: 10 }], confidence: 'weird' });
   assert.deepEqual([n.items[0].grams, n.items[0].kcal, n.items[0].p, n.items[0].c], [100, 201, 10, 0]);
   assert.equal(n.confidence, 'medium');
+});
+
+test('parseModelOutput: tool call, fenced JSON, prose + JSON, garbage', () => {
+  assert.equal(parseModelOutput([{ toolUse: { input: { meal_name: 'a', items: [] } } }]).meal_name, 'a');
+  assert.equal(parseModelOutput([{ text: '```json\n{"meal_name":"b","items":[]}\n```' }]).meal_name, 'b');
+  assert.equal(parseModelOutput([{ text: 'Here you go: {"meal_name":"c","items":[]} enjoy' }]).meal_name, 'c');
+  assert.equal(parseModelOutput([{ text: 'no json here' }]), null);
 });

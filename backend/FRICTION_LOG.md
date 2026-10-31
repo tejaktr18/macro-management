@@ -27,6 +27,13 @@ Sources: [Web Functions launch blog](https://aws.amazon.com/blogs/aws/announcing
 [Execution role](https://docs.aws.amazon.com/lambda/latest/dg/web-functions-permissions.html) ·
 [Bedrock: Claude Sonnet 5.5 model card](https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5-5.html)
 
+## Found during the first deploy (Oct 31, 2026)
+
+| # | Sev | Area | What happened | Workaround used | What would delight |
+| --- | --- | --- | --- | --- | --- |
+| D1 | S2 | Bedrock / Converse | `/api/analyze` failed at runtime: forcing a tool call (`toolChoice: {tool: ...}`) and `any` are "not supported for this model" (Claude Sonnet 5.5). The model card didn't say so, and nothing caught it before a real request. | Dropped `toolChoice` (default auto) + system prompt, plus a JSON-in-text fallback parser. | Model cards list supported Converse features (toolChoice modes). Or the API ignores the unsupported mode with a warning instead of failing. |
+| D2 | S4 | Credentials | Isengard credentials need `ada`, which only exists on work laptops. A personal Mac has no easy path, and you shouldn't create long-lived keys. | Deployed from AWS CloudShell (already signed in, has the CLI, git and Node). | Customers: `aws configure sso`. CloudShell was the smoothest part of the day. |
+
 ## Fill in during the real deploy
 
 Track time from `git clone` to the first photo estimate working on the phone.

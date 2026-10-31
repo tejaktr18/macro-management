@@ -12,7 +12,8 @@ calories and macros for that portion. Rules:
 - If the user says how much they ate (e.g. "ate half"), apply it.
 - If an item is ambiguous, pick the most likely Indian/US version and say so in "assumption".
 - Never refuse; give your best estimate and set confidence accordingly.
-Always answer by calling the record_meal tool.`;
+Always answer by calling the record_meal tool. If you cannot call it, reply with only the JSON object
+that matches the tool's input schema, and no other text.`;
 
 const TOOL = {
   toolSpec: {
@@ -68,6 +69,16 @@ export function normalize(raw) {
   };
 }
 
+// Prefer the tool call; otherwise pull the first JSON object out of the text.
+export function parseModelOutput(blocks) {
+  const tool = blocks.find((b) => b.toolUse);
+  if (tool) return tool.toolUse.input;
+  const text = blocks.map((b) => b.text || '').join('\n').replace(/```(?:json)?/gi, '');
+  const start = text.indexOf('{'), end = text.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  try { return JSON.parse(text.slice(start, end + 1)); } catch { return null; }
+}
+
 export function bedrockAnalyzer({ region, modelId }) {
   const client = new BedrockRuntimeClient({ region });
   return async function analyze({ imageBytes, imageFormat = 'jpeg', text }) {
@@ -79,13 +90,16 @@ export function bedrockAnalyzer({ region, modelId }) {
       modelId,
       system: [{ text: SYSTEM }],
       messages: [{ role: 'user', content }],
-      toolConfig: { tools: [TOOL], toolChoice: { tool: { name: 'record_meal' } } },
+      // No toolChoice: Claude Sonnet 5.5 on Bedrock rejects toolChoice "tool"/"any".
+      // The default ("auto") plus the system prompt is enough; parseModelOutput
+      // also accepts a plain-JSON reply as a fallback.
+      toolConfig: { tools: [TOOL] },
       inferenceConfig: { maxTokens: 1500 },
     }));
-    const block = (res.output?.message?.content || []).find((b) => b.toolUse);
-    if (!block) throw new Error('Model did not return a record_meal tool call');
+    const raw = parseModelOutput(res.output?.message?.content || []);
+    if (!raw) throw new Error('Model returned no usable estimate (no tool call or JSON)');
     return {
-      ...normalize(block.toolUse.input),
+      ...normalize(raw),
       meta: { modelId, ms: Date.now() - t0, usage: res.usage },
     };
   };
