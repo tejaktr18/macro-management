@@ -83,6 +83,9 @@
   .ex .body{display:none;padding:0 14px 12px}
   .ex.open .body{display:block}
   .ex .note{font-size:12.5px;color:var(--muted);line-height:1.5;margin:2px 0 10px}
+  .ex .last{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);margin-top:3px}
+  .ex .last b{color:var(--gold);font-weight:600}
+  .uselast{background:none;border:1px dashed var(--line);color:var(--muted);border-radius:9px;padding:8px 10px;font-size:12px;cursor:pointer;width:100%;margin:2px 0 6px;font-family:"IBM Plex Sans"}
   .setrow{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px dashed var(--line)}
   .setrow .sidx{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--faint);width:46px}
   .setrow input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);color:var(--text);
@@ -725,20 +728,28 @@ function renderToday(){
   const body=document.getElementById('todayBody');
   let html='<div class="card"><div class="note" style="font-size:13px;color:var(--muted);line-height:1.55;margin:0">'+s.blurb+'</div></div>';
   const log=DB.get('log-'+dateKey,{});
+  const logKeys=DB.keys().filter(k=>/^log-\d{4}-\d{2}-\d{2}$/.test(k)&&k.slice(4)<dateKey).sort().reverse();
   s.items.forEach(ex=>{
     const id=exId(ex.name);
     const st=log[id]||{w:[],done:[]};
     const n=effSets(ex,wk);
     const scheme=(n>0&&n!==ex.sets)?(ex.scheme+' → '+n+' sets this week'):ex.scheme;
+    const last=n>0?lastLift(id,logKeys):null;
+    const lastW=last?last.w.filter(x=>x!==''):[];
     html+='<div class="ex" data-ex="'+id+'">';
-    html+='<div class="top" onclick="toggleEx(this)"><div><div class="nm">'+ex.name+'</div><div class="scheme">'+scheme+'</div></div><div class="chev">▶</div></div>';
+    html+='<div class="top" onclick="toggleEx(this)"><div><div class="nm">'+ex.name+'</div><div class="scheme">'+scheme+'</div>'+
+      (last?'<div class="last">Last · '+esc(last.label)+' · <b>'+esc(lastW.join(' / '))+' '+unitL()+'</b></div>':'')+
+      '</div><div class="chev">▶</div></div>';
     html+='<div class="body">';
     if(ex.note) html+='<div class="note">'+ex.note+'</div>';
     if(n>0){
+      if(last&&!st.w.some(x=>x!==''&&x!=null))
+        html+='<button class="uselast" data-w="'+esc(JSON.stringify(last.w.slice(0,n)))+'" onclick="useLast(\''+dateKey+'\',\''+id+'\',this)">↺ Start from last session’s weights ('+esc(lastW.join(' / '))+')</button>';
       for(let k=0;k<n;k++){
         const w=st.w[k]||'', done=st.done[k]?'on':'';
+        const ph=last?(last.w[k]||lastW[lastW.length-1]||unitL()):unitL();
         html+='<div class="setrow"><span class="sidx">Set '+(k+1)+'</span>'+
-          '<input type="number" inputmode="decimal" placeholder="'+unitL()+'" value="'+w+'" oninput="logW(\''+dateKey+'\',\''+id+'\','+k+',this.value)"><span class="unit">'+unitL()+'</span>'+
+          '<input type="number" inputmode="decimal" placeholder="'+esc(ph)+'" value="'+w+'" oninput="logW(\''+dateKey+'\',\''+id+'\','+k+',this.value)"><span class="unit">'+unitL()+'</span>'+
           '<div class="chk '+done+'" onclick="logDone(\''+dateKey+'\',\''+id+'\','+k+',this)">✓</div></div>';
       }
     } else {
@@ -763,6 +774,31 @@ function renderToday(){
 }
 
 function toggleEx(el){el.parentElement.classList.toggle('open')}
+
+// Most recent earlier day where this exercise has at least one weight logged.
+// logKeys: "log-YYYY-MM-DD" keys before today, newest first.
+function lastLift(id,logKeys){
+  for(const k of logKeys){
+    const st=(DB.get(k,{})||{})[id];
+    if(!st||!Array.isArray(st.w))continue;
+    const w=st.w.map(x=>(x==null||isNaN(parseFloat(x)))?'':String(parseFloat(x)));
+    if(w.some(x=>x!=='')){
+      const [y,m,d]=k.slice(4).split('-').map(Number);
+      const label=new Date(y,m-1,d).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+      return {day:k.slice(4),label,w};
+    }
+  }
+  return null;
+}
+// Copy last session's weights into today's sets (not marked done).
+function useLast(dateKey,id,btn){
+  let w=[];try{w=JSON.parse(btn.dataset.w)}catch(e){}
+  const log=DB.get('log-'+dateKey,{}); const st=log[id]||{w:[],done:[]};
+  w.forEach((x,k)=>{if(x!=='')st.w[k]=x});log[id]=st;DB.set('log-'+dateKey,log);
+  const open=[...document.querySelectorAll('#todayBody .ex.open')].map(e=>e.dataset.ex);
+  renderToday();
+  open.forEach(x=>{const e=document.querySelector('#todayBody .ex[data-ex="'+x+'"]');if(e)e.classList.add('open')});
+}
 
 function logW(dateKey,id,k,val){
   const log=DB.get('log-'+dateKey,{}); const st=log[id]||{w:[],done:[]};
