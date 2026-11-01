@@ -469,19 +469,19 @@ const UPA={type:'lift',pill:'Upper A',pillClass:'',fuel:'regular',title:'Chest +
   blurb:'Upper chest and delts first — they show most in a suit. Finish every set with 1–2 good reps left.',
   items:[
     CUFF,
-    {name:'Incline DB press, 30°',scheme:'3 × 6–10 · rest 2–3 min',sets:3,note:'Or Smith incline. Start ~16–20 kg/hand.'},
-    {name:'One-arm DB row',scheme:'3 × 8–12 / side · 90 s',sets:3,note:'Or seated cable row. Start ~22–26 kg.'},
-    {name:'Seated DB shoulder press',scheme:'3 × 8–10 · 2 min',sets:3,note:'Start ~14–16 kg/hand.'},
-    {name:'Lat pulldown',scheme:'3 × 10–12 · 90 s',sets:3,note:'Normal grip. Start ~45–55 kg.'},
-    {name:'DB lateral raise',scheme:'4 × 12–20 · 60 s',sets:4,note:'Start ~6–8 kg. Add reps before weight — strict, no swinging.'},
+    {name:'Incline DB press, 30°',scheme:'3 × 6–10 · rest 2–3 min',sets:3,note:'Or Smith incline. Start ~35–45 lb/hand.'},
+    {name:'One-arm DB row',scheme:'3 × 8–12 / side · 90 s',sets:3,note:'Or seated cable row. Start ~50–55 lb.'},
+    {name:'Seated DB shoulder press',scheme:'3 × 8–10 · 2 min',sets:3,note:'Start ~30–35 lb/hand.'},
+    {name:'Lat pulldown',scheme:'3 × 10–12 · 90 s',sets:3,note:'Normal grip. Start ~100–120 lb.'},
+    {name:'DB lateral raise',scheme:'4 × 12–20 · 60 s',sets:4,note:'Start ~12.5–17.5 lb. Add reps before weight — strict, no swinging.'},
     {name:'Overhead DB triceps extension',scheme:'3 × 10–15 · 60 s',sets:3},
-    {name:'DB curl',scheme:'3 × 10–15 · 60 s',sets:3,note:'Start ~10–12 kg. Arm priority.'}
+    {name:'DB curl',scheme:'3 × 10–15 · 60 s',sets:3,note:'Start ~20–25 lb. Arm priority.'}
   ]};
 const LOA={type:'lift',pill:'Lower A',pillClass:'',fuel:'regular',title:'Quads',
   blurb:'Chicken-legs fix, part 1. Full depth, controlled lowering.',
   items:[
     CUFF,
-    {name:'Back squat',scheme:'4 × 6–10 · rest 2–3 min',sets:4,note:'Start ~50–60 kg. Or goblet squat 8–12 reps (start ~24–28 kg).'},
+    {name:'Back squat',scheme:'4 × 6–10 · rest 2–3 min',sets:4,note:'Start ~110–135 lb. Or goblet squat 8–12 reps (start ~50–60 lb).'},
     {name:'Bulgarian split squat',scheme:'3 × 8–12 / leg · 90 s',sets:3},
     {name:'Leg extension',scheme:'2 × 12–15 · 60 s',sets:2,note:'Or DB step-up.'},
     {name:'Leg curl',scheme:'3 × 10–15 · 60 s',sets:3,note:'Or Swiss-ball curl.'},
@@ -493,7 +493,7 @@ const UPB={type:'lift',pill:'Upper B',pillClass:'',fuel:'regular',title:'Back + 
   items:[
     CUFF,
     {name:'Pull-ups',scheme:'3 × 6–10 · rest 2–3 min',sets:3,note:'Or heavy lat pulldown.'},
-    {name:'Flat DB bench press',scheme:'3 × 6–10 · 2–3 min',sets:3,note:'Start ~18–22 kg/hand.'},
+    {name:'Flat DB bench press',scheme:'3 × 6–10 · 2–3 min',sets:3,note:'Start ~40–50 lb/hand.'},
     {name:'Chest-supported DB row',scheme:'3 × 10–12 · 90 s',sets:3,note:'Chest on an incline bench.'},
     {name:'Low-to-high cable fly',scheme:'3 × 12–15 · 60 s',sets:3,note:'Or incline DB fly. Upper-chest focus.'},
     {name:'DB lateral raise',scheme:'4 × 12–20 · 60 s',sets:4},
@@ -515,7 +515,7 @@ const LOB={type:'lift',pill:'Lower B',pillClass:'',fuel:'saturday',title:'Hamstr
   blurb:'Chicken-legs fix, part 2. Earn the cheat meal.',
   items:[
     CUFF,
-    {name:'Romanian deadlift',scheme:'3 × 6–10 · rest 2–3 min',sets:3,note:'Barbell or DB (start ~20–24 kg/hand). Hips back, flat back.'},
+    {name:'Romanian deadlift',scheme:'3 × 6–10 · rest 2–3 min',sets:3,note:'Barbell or DB (start ~45–55 lb/hand). Hips back, flat back.'},
     {name:'Hip thrust',scheme:'3 × 8–12 · 2 min',sets:3,note:'Barbell or DB.'},
     {name:'Walking lunge',scheme:'3 × 10 / leg · 90 s',sets:3},
     {name:'Leg curl',scheme:'2 × 12–15 · 60 s',sets:2},
@@ -591,7 +591,7 @@ function renderToday(){
       for(let k=0;k<n;k++){
         const w=st.w[k]||'', done=st.done[k]?'on':'';
         html+='<div class="setrow"><span class="sidx">Set '+(k+1)+'</span>'+
-          '<input type="number" inputmode="decimal" placeholder="wt" value="'+w+'" oninput="logW(\''+dateKey+'\',\''+id+'\','+k+',this.value)"><span class="unit">kg</span>'+
+          '<input type="number" inputmode="decimal" placeholder="lb" value="'+w+'" oninput="logW(\''+dateKey+'\',\''+id+'\','+k+',this.value)"><span class="unit">lb</span>'+
           '<div class="chk '+done+'" onclick="logDone(\''+dateKey+'\',\''+id+'\','+k+',this)">✓</div></div>';
       }
     } else {
@@ -858,7 +858,7 @@ function renderWeek(){
       <li>Biceps <b>~10</b> · Triceps <b>~10</b></li>
       <li>Quads <b>~12</b> · Calves <b>8</b></li>
     </ul>
-    <div class="method"><b>Progression:</b> top of the rep range on every set with clean form → next session go up (next DB, +2.5 kg barbell upper, +5 kg barbell lower), then work back up the range. Raises &amp; rear delts: add reps before weight.<br><b>Deload:</b> week 8, or whenever lifts stall 2 weeks running.</div>
+    <div class="method"><b>Progression:</b> top of the rep range on every set with clean form → next session go up (next DB up, +5 lb barbell upper, +10 lb barbell lower), then work back up the range. Raises &amp; rear delts: add reps before weight.<br><b>Deload:</b> week 8, or whenever lifts stall 2 weeks running.</div>
   </div>`;
   document.getElementById('weekBody').innerHTML=html;
   document.querySelectorAll('#view-week .card.tight .top').forEach(t=>{
