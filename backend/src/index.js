@@ -18,16 +18,24 @@ const analyze = env.MOCK_AI === '1'
   ? mockAnalyzer()
   : bedrockAnalyzer({ region, modelId: env.MODEL_ID });
 
-// Token: API_TOKEN for local dev, otherwise read once from Secrets Manager
-// and cache for the life of the execution environment (refresh hourly so a
-// rotated secret is picked up without a redeploy).
+// Token: API_TOKEN for local dev, otherwise read from Secrets Manager and
+// cached in memory. Re-read when the cache is an hour old, or immediately
+// (at most once a minute) when a request's token doesn't match - so a
+// rotated token works right away, without a redeploy.
+const TOKEN_TTL_MS = 3_600_000;
+const FORCED_REFRESH_MIN_GAP_MS = 60_000;
 let cached = { value: env.API_TOKEN || '', at: env.API_TOKEN ? Infinity : 0 };
+let lastForced = 0;
 const sm = env.TOKEN_SECRET_ARN ? new SecretsManagerClient({ region }) : null;
-async function getToken() {
-  if (Date.now() - cached.at < 3_600_000) return cached.value;
+async function getToken({ refresh = false } = {}) {
   if (!sm) return cached.value;
+  const now = Date.now();
+  const stale = now - cached.at >= TOKEN_TTL_MS;
+  const forced = refresh && now - lastForced >= FORCED_REFRESH_MIN_GAP_MS;
+  if (!stale && !forced) return cached.value;
+  if (forced) lastForced = now;
   const r = await sm.send(new GetSecretValueCommand({ SecretId: env.TOKEN_SECRET_ARN }));
-  cached = { value: r.SecretString, at: Date.now() };
+  cached = { value: r.SecretString, at: now };
   return cached.value;
 }
 

@@ -37,8 +37,16 @@ export function createApp({ store, analyze, getToken, allowedOrigins = ['*'], in
   app.use('/api/*', async (c, next) => {
     const h = c.req.header('Authorization') || '';
     const token = h.startsWith('Bearer ') ? h.slice(7) : '';
-    const expected = await getToken();
-    if (!token || !expected || !sameToken(token, expected)) return c.json({ error: 'unauthorized' }, 401);
+    if (!token) return c.json({ error: 'unauthorized' }, 401);
+    let expected = await getToken();
+    let ok = !!expected && sameToken(token, expected);
+    // Token rotated in Secrets Manager? Re-read it once before rejecting.
+    // getToken rate-limits forced refreshes, so bad tokens can't hammer Secrets Manager.
+    if (!ok) {
+      expected = await getToken({ refresh: true });
+      ok = !!expected && sameToken(token, expected);
+    }
+    if (!ok) return c.json({ error: 'unauthorized' }, 401);
     await next();
   });
 

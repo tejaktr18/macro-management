@@ -95,5 +95,7 @@ billed per token, and images count as input tokens. Check the pricing pages for 
 - The endpoint is public (`ApplicationManaged` auth). Every `/api/*` call needs the 48-character
   bearer token, compared in constant time. `/health` reveals only region and model.
 - CORS allows only `ALLOWED_ORIGINS` (default `https://tejaktr18.github.io`).
-- To rotate the token, change the secret in Secrets Manager. The function picks it up within an hour.
-  Then paste the new token in the app.
+- To rotate the token, put a new value in Secrets Manager (console, or
+  `aws secretsmanager put-secret-value --secret-id <ApiTokenSecretArn> --secret-string "$(aws secretsmanager get-random-password --password-length 48 --exclude-punctuation --query RandomPassword --output text)"`),
+  then paste it into the app's Cloud sync. The function re-reads the secret on the first mismatched
+  token (at most once a minute), so the new token works immediately. No redeploy needed.

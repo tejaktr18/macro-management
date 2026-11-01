@@ -60,3 +60,16 @@ test('parseModelOutput: tool call, fenced JSON, prose + JSON, garbage', () => {
   assert.equal(parseModelOutput([{ text: 'Here you go: {"meal_name":"c","items":[]} enjoy' }]).meal_name, 'c');
   assert.equal(parseModelOutput([{ text: 'no json here' }]), null);
 });
+
+test('rotated token is accepted immediately (one forced refresh)', async () => {
+  let secret = 'old', refreshes = 0;
+  const getToken = async ({ refresh = false } = {}) => { if (refresh) { refreshes++; secret = 'new'; } return secret; };
+  const rot = createApp({ store: memoryStore(), analyze: mockAnalyzer(), getToken });
+  const call = (t) => rot.request('/api/whoami', { headers: { Authorization: 'Bearer ' + t } });
+  assert.equal((await call('old')).status, 200);
+  assert.equal(refreshes, 0, 'valid token must not trigger a refresh');
+  assert.equal((await call('new')).status, 200, 'new token works after rotation');
+  assert.equal(refreshes, 1);
+  assert.equal((await call('old')).status, 401, 'old token stops working');
+  assert.equal((await rot.request('/api/whoami')).status, 401, 'missing token never triggers a refresh');
+});
