@@ -11,7 +11,7 @@ iPhone (index.html on GitHub Pages)
 Lambda Web Function  (Node 24, Hono)      backend/src
    ├── DynamoDB      one table, PK=U#me SK=KV#<key>, PITR on, retained on delete
    ├── Bedrock       Claude Sonnet 5.5 (US inference profile), photo/text -> JSON via forced tool call
-   └── Secrets Mgr   generated API token
+   └── Secrets Mgr   users and their API tokens
 ```
 
 | Path | What |
@@ -25,6 +25,48 @@ Lambda Web Function  (Node 24, Hono)      backend/src
 | `backend/envs/example.env` | Per-account settings (copy to `envs/<name>.env`, git-ignored) |
 | `.github/workflows/deploy-backend.yml` | CI/CD: test, then deploy to the chosen account |
 | `backend/FRICTION_LOG.md` | Customer pain points hit while building this |
+
+## Users
+
+Each person has their own token, and the token alone says who they are. Their data lives under their
+own partition (`PK = U#<user>`), so nobody can see anyone else's. Each person also has a **profile**
+(Me tab): name, calorie targets, weekly plan, quick-add buttons, and an "about you" note that the photo
+estimator uses. The profile syncs like any other data.
+
+The secret holds the user list as JSON:
+
+```json
+{ "me": "<Teja's token>", "sam": "<Sam's token>" }
+```
+
+A plain (non-JSON) secret is the original single-user format and means `{"me": "<secret>"}`. That's why
+Teja's data lives under `me`.
+
+### Adding a user
+
+1. Create a token (CloudShell):
+   `aws secretsmanager get-random-password --password-length 48 --exclude-punctuation --query RandomPassword --output text`
+2. Secrets Manager console → the "protocol API bearer token" secret → **Retrieve secret value** → **Edit**:
+   - **First time only:** the value is still your plain token. Replace it with
+     `{"me": "<your current token>", "sam": "<new token>"}`. Keep `me` exactly as it is, or your own
+     data won't be found.
+   - **Later:** in the **Key/value** tab, **Add row**: `sam` → new token.
+
+   User names: lowercase letters, digits, `-` or `_`, up to 32 characters.
+3. Send them the app link, the API URL, and their token. They open **Me** → **Cloud sync** → paste →
+   **Save & sync**, then set up their profile on the same tab.
+
+No redeploy is needed. On the first request with a token it doesn't recognise, the backend re-reads the
+secret (at most once a minute).
+
+**Removing someone:** delete their row, and their token stops working within a minute. Their data stays in
+DynamoDB under `U#<name>` until you delete those items.
+
+**Cost guard:** each user gets `DAILY_ANALYZE_LIMIT` photo/text estimates per day (default 40, resets
+at midnight Pacific). Set it in `envs/<env>.env`. For GitHub Actions deploys, add
+`DAILY_ANALYZE_LIMIT: ${{ vars.DAILY_ANALYZE_LIMIT || '40' }}` to the Deploy step's `env:` in the workflow
+and a matching environment variable. Usage counters
+are stored as `SYS#` items with a 3-day TTL, and they never sync to the app.
 
 ## Where data lives
 
@@ -95,7 +137,6 @@ billed per token, and images count as input tokens. Check the pricing pages for 
 - The endpoint is public (`ApplicationManaged` auth). Every `/api/*` call needs the 48-character
   bearer token, compared in constant time. `/health` reveals only region and model.
 - CORS allows only `ALLOWED_ORIGINS` (default `https://tejaktr18.github.io`).
-- To rotate the token, put a new value in Secrets Manager (console, or
-  `aws secretsmanager put-secret-value --secret-id <ApiTokenSecretArn> --secret-string "$(aws secretsmanager get-random-password --password-length 48 --exclude-punctuation --query RandomPassword --output text)"`),
-  then paste it into the app's Cloud sync. The function re-reads the secret on the first mismatched
-  token (at most once a minute), so the new token works immediately. No redeploy needed.
+- To rotate someone's token, change their value in the secret (console → Edit → Key/value), then
+  paste the new token into their app's Cloud sync. The function re-reads the secret on the first
+  unrecognised token (at most once a minute), so it works immediately. No redeploy is needed.

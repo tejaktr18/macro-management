@@ -3,7 +3,7 @@
 // sets it to 127.0.0.1:3000 and uses an in-memory store + mock analyzer.
 import { serve } from '@hono/node-server';
 import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
-import { createApp } from './app.js';
+import { createApp, parseUsers } from './app.js';
 import { memoryStore, dynamoStore } from './store.js';
 import { bedrockAnalyzer, mockAnalyzer } from './analyze.js';
 
@@ -12,37 +12,42 @@ const region = env.APP_REGION || env.AWS_REGION || 'us-west-2';
 
 const store = env.STORE === 'memory'
   ? memoryStore()
-  : dynamoStore({ tableName: env.TABLE_NAME, region });
+  : dynamoStore({ tableName: env.TABLE_NAME, region, endpoint: env.DYNAMODB_ENDPOINT }); // endpoint: local testing only
 
 const analyze = env.MOCK_AI === '1'
   ? mockAnalyzer()
   : bedrockAnalyzer({ region, modelId: env.MODEL_ID });
 
-// Token: API_TOKEN for local dev, otherwise read from Secrets Manager and
-// cached in memory. Re-read when the cache is an hour old, or immediately
-// (at most once a minute) when a request's token doesn't match - so a
-// rotated token works right away, without a redeploy.
-const TOKEN_TTL_MS = 3_600_000;
+// Users + tokens. The secret holds JSON: {"teja": "<token>", "friend": "<token>"}.
+// A plain (non-JSON) secret is treated as {"me": "<secret>"} - the original
+// single-user format, so existing data under user "me" keeps working.
+// Local dev: API_USERS='{"me":"dev"}' or API_TOKEN=dev.
+// Cached in memory; re-read hourly, or immediately (at most once a minute)
+// when a token doesn't match anyone - so new users and rotated tokens work
+// without a redeploy.
+const USERS_TTL_MS = 3_600_000;
 const FORCED_REFRESH_MIN_GAP_MS = 60_000;
-let cached = { value: env.API_TOKEN || '', at: env.API_TOKEN ? Infinity : 0 };
+const localUsers = env.API_USERS || env.API_TOKEN || '';
+let cached = { users: parseUsers(localUsers), at: localUsers ? Infinity : 0 };
 let lastForced = 0;
 const sm = env.TOKEN_SECRET_ARN ? new SecretsManagerClient({ region }) : null;
-async function getToken({ refresh = false } = {}) {
-  if (!sm) return cached.value;
+async function getUsers({ refresh = false } = {}) {
+  if (!sm) return cached.users;
   const now = Date.now();
-  const stale = now - cached.at >= TOKEN_TTL_MS;
+  const stale = now - cached.at >= USERS_TTL_MS;
   const forced = refresh && now - lastForced >= FORCED_REFRESH_MIN_GAP_MS;
-  if (!stale && !forced) return cached.value;
+  if (!stale && !forced) return cached.users;
   if (forced) lastForced = now;
   const r = await sm.send(new GetSecretValueCommand({ SecretId: env.TOKEN_SECRET_ARN }));
-  cached = { value: r.SecretString, at: now };
-  return cached.value;
+  cached = { users: parseUsers(r.SecretString), at: now };
+  return cached.users;
 }
 
 const allowedOrigins = (env.ALLOWED_ORIGINS || '*').split(',').map((s) => s.trim()).filter(Boolean);
 
 const app = createApp({
-  store, analyze, getToken, allowedOrigins,
+  store, analyze, getUsers, allowedOrigins,
+  dailyAnalyzeLimit: Number(env.DAILY_ANALYZE_LIMIT || 40),
   info: { region, model: env.MOCK_AI === '1' ? 'mock' : env.MODEL_ID, version: env.APP_VERSION || 'dev' },
 });
 

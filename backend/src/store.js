@@ -3,10 +3,12 @@
 //
 // DynamoDB layout (single table):
 //   PK = "U#<userId>"   SK = "KV#<key>"   value = JSON string   updatedAt = epoch ms
+//   PK = "U#<userId>"   SK = "SYS#<name>" n = counter           expiresAt = epoch s (TTL)
+// SYS# items are server-only (usage counters): never listed, synced or exported.
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   DynamoDBDocumentClient, GetCommand, PutCommand, DeleteCommand,
-  QueryCommand, BatchWriteCommand,
+  QueryCommand, BatchWriteCommand, UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
 const MAX_KEY = 200;
@@ -22,6 +24,7 @@ export function validValue(v) {
 /* ---------------- in-memory (local dev + tests) ---------------- */
 export function memoryStore() {
   const m = new Map(); // `${user}|${key}` -> {key, value, updatedAt}
+  const counters = new Map();
   const id = (u, k) => `${u}|${k}`;
   return {
     kind: 'memory',
@@ -44,12 +47,18 @@ export function memoryStore() {
       for (const r of records) await this.put(user, r.key, r.value, r.updatedAt);
       return records.length;
     },
+    async incr(user, name) {
+      const k = `${user}|SYS#${name}`;
+      const n = (counters.get(k) || 0) + 1;
+      counters.set(k, n);
+      return n;
+    },
   };
 }
 
 /* ---------------- DynamoDB ---------------- */
-export function dynamoStore({ tableName, region }) {
-  const doc = DynamoDBDocumentClient.from(new DynamoDBClient({ region }), {
+export function dynamoStore({ tableName, region, endpoint }) {
+  const doc = DynamoDBDocumentClient.from(new DynamoDBClient({ region, ...(endpoint ? { endpoint } : {}) }), {
     marshallOptions: { removeUndefinedValues: true },
   });
   const pk = (u) => `U#${u}`;
@@ -115,6 +124,18 @@ export function dynamoStore({ tableName, region }) {
         if (items.length) throw new Error(`import: ${items.length} items left unprocessed`);
       }
       return n;
+    },
+    // Atomic counter; DynamoDB TTL deletes it after ttlDays.
+    async incr(user, name, { ttlDays = 3 } = {}) {
+      const r = await doc.send(new UpdateCommand({
+        TableName: tableName,
+        Key: { PK: pk(user), SK: `SYS#${name}` },
+        UpdateExpression: 'ADD #n :one SET #e = if_not_exists(#e, :exp)',
+        ExpressionAttributeNames: { '#n': 'n', '#e': 'expiresAt' }, // avoid reserved-word clashes
+        ExpressionAttributeValues: { ':one': 1, ':exp': Math.floor(Date.now() / 1000) + ttlDays * 86400 },
+        ReturnValues: 'UPDATED_NEW',
+      }));
+      return Number(r.Attributes?.n || 0);
     },
   };
 }

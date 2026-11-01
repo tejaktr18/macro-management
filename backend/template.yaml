@@ -33,6 +33,11 @@ Parameters:
   AppVersion:
     Type: String
     Default: dev
+  DailyAnalyzeLimit:
+    Type: Number
+    Default: 40
+    MinValue: 0
+    Description: Photo/text estimates per user per day (0 = unlimited). Every estimate is billed to this account.
 
 Resources:
   # ---------------- data ----------------
@@ -50,13 +55,18 @@ Resources:
         - { AttributeName: SK, KeyType: RANGE }
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:          # expires per-user usage counters (SYS# items)
+        AttributeName: expiresAt
+        Enabled: true
       SSESpecification:
         SSEEnabled: true
       Tags:
         - { Key: app, Value: !Ref AppName }
 
-  # Random bearer token the app sends. Read it with:
-  #   aws secretsmanager get-secret-value --secret-id <ApiTokenSecretArn> --query SecretString --output text
+  # Users and their bearer tokens. Created as one random token (= user "me").
+  # To add users, change the value to JSON: {"me": "<existing token>", "sam": "<new token>"}
+  # (see README "Adding a user"). CloudFormation never overwrites your edits:
+  # GenerateSecretString only runs when the secret is first created.
   ApiTokenSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
@@ -89,6 +99,7 @@ Resources:
                 Action:
                   - dynamodb:GetItem
                   - dynamodb:PutItem
+                  - dynamodb:UpdateItem
                   - dynamodb:DeleteItem
                   - dynamodb:Query
                   - dynamodb:BatchWriteItem
@@ -128,6 +139,7 @@ Resources:
         APP_REGION: !Ref AWS::Region
         ALLOWED_ORIGINS: !Ref AllowedOrigins
         APP_VERSION: !Ref AppVersion
+        DAILY_ANALYZE_LIMIT: !Ref DailyAnalyzeLimit
       Tags:
         app: !Ref AppName
 

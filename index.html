@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="PROTOCOL" />
-<title>PROTOCOL — Teja</title>
+<title>PROTOCOL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -180,6 +180,27 @@
   .syncst{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:8px;color:var(--muted)}
   .syncst.ok{color:var(--accent)} .syncst.err{color:var(--hot)}
 
+  /* me / profile */
+  .lbl{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:8px}
+  select.field{appearance:none;-webkit-appearance:none}
+  .frow{border-top:1px dashed var(--line);padding:10px 0 4px}
+  .frow:first-child{border-top:none;padding-top:2px}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .g4 input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 6px;font-family:"IBM Plex Mono",monospace;font-size:13px}
+  .g4 span{display:block;font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--faint);text-transform:uppercase;margin-bottom:2px}
+  .drow{display:grid;grid-template-columns:44px 1fr 108px;gap:6px;align-items:center;padding:4px 0}
+  .drow b{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:1px;font-weight:400}
+  .drow select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 6px;font-size:12.5px;font-family:"IBM Plex Sans"}
+  .qrow{border-top:1px dashed var(--line);padding:8px 0}
+  .qrow:first-child{border-top:none}
+  .qrow .top2{display:flex;gap:6px;align-items:center}
+  .qrow .top2 input{flex:1}
+  .xbtn{background:none;border:1px solid var(--line);color:var(--faint);border-radius:8px;padding:8px 10px;cursor:pointer}
+  details.calc{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface2)}
+  details.calc summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent)}
+  .banner{border-color:rgba(205,255,58,.4)!important;background:#14180f!important}
+  .qa button{overflow:hidden;text-overflow:ellipsis}
+
   .btn{display:block;width:100%;text-align:center;background:var(--accent);color:#0b0c0e;border:none;
     border-radius:12px;padding:13px;font-weight:700;font-size:14px;cursor:pointer;font-family:"IBM Plex Sans"}
   .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:500}
@@ -189,7 +210,7 @@
   nav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,14,17,.86);
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);
     padding:8px 0 calc(8px + var(--safe-b));z-index:50}
-  nav .row{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+  nav .row{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
   nav button{background:none;border:none;color:var(--faint);font-family:"IBM Plex Sans";
     font-size:10.5px;font-weight:600;padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:.3px}
   nav button .ic{font-size:19px;line-height:1}
@@ -202,8 +223,8 @@
   <div class="brand">
     <h1>PRO<span>TOCOL</span></h1>
     <div style="text-align:right">
-      <div class="sub">Teja · 12-week cut</div>
-      <div class="phase" id="phaseTag">Week 1 · Ease-in</div>
+      <div class="sub" id="hdrSub"></div>
+      <div class="phase" id="phaseTag"></div>
     </div>
   </div>
 </header>
@@ -211,6 +232,7 @@
 <!-- ===================== TODAY ===================== -->
 <section class="view active" id="view-today">
   <div class="wrap">
+    <div id="profileBanner"></div>
     <div class="hero">
       <div class="daynav">
         <button id="prevDay">‹</button>
@@ -241,8 +263,7 @@
       <div class="weekline" id="weekLine"></div>
 
       <div class="qa">
-        <button id="qaShake">＋ Shake<small>540 kcal · 52 g P</small></button>
-        <button id="qaMeal">＋ Prepped meal<small>680 kcal · 52 g P</small></button>
+        <span id="qaQuick" style="display:contents"></span>
         <button class="cam" id="qaPhoto">📷 Photo<small>estimate from a picture</small></button>
         <button id="qaText">✎ Describe<small>"2 roti + dal + paneer"</small></button>
       </div>
@@ -261,7 +282,100 @@
       </div>
       <div class="wi-last" id="wiLast"></div>
       <div id="trendBox"></div>
-      <div class="tipnote">Weigh every morning after the bathroom, before water. Mon fast &amp; Sat cheat swing single days 1–2 kg — only the <b>7-day average</b> counts. Flat scale + shrinking waist + lifts going up = recomp working, change nothing.</div>
+      <div class="tipnote">Weigh every morning after the bathroom, before water. Fast days and big meals swing single days 1–2 kg — only the <b>7-day average</b> counts. Flat scale + shrinking waist + lifts going up = recomp working, change nothing.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== WEEK ===================== -->
+<section class="view" id="view-week">
+  <div class="wrap"><div id="weekBody"></div></div>
+</section>
+
+<!-- ===================== MEALS ===================== -->
+<section class="view" id="view-meals">
+  <div class="wrap" id="mealsBody"></div>
+</section>
+
+<!-- ===================== SHOP ===================== -->
+<section class="view" id="view-shop">
+  <div class="wrap">
+    <div class="sect" style="margin-top:14px">Weekly Shop <small>Tap to check off · amounts cover ~11 prepped meals</small></div>
+    <div id="shopBody"></div>
+    <button class="btn ghost" id="resetShop" style="margin:16px 0 8px">Reset checklist</button>
+  </div>
+</section>
+
+
+<!-- ===================== ME ===================== -->
+<section class="view" id="view-me">
+  <div class="wrap">
+    <div class="sect" style="margin-top:14px">Me <small>your own profile · syncs to your account only</small></div>
+    <div class="card">
+      <div class="sect" style="margin-top:0">Profile</div>
+      <label class="lbl" for="pName">Name</label>
+      <input class="field" id="pName" autocomplete="off">
+      <label class="lbl" for="pAbout">About you · makes photo estimates more accurate</label>
+      <textarea class="field" id="pAbout" rows="3" placeholder="e.g. 30F, vegetarian, mostly Gujarati home food, eats out on weekends"></textarea>
+      <div class="row2">
+        <div><label class="lbl" for="pUnit">Lift weights in</label><select class="field" id="pUnit"><option value="lb">lb</option><option value="kg">kg</option></select></div>
+        <div><label class="lbl" for="pStart">Program start</label><input class="field" id="pStart" type="date"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sect" style="margin-top:0">Daily targets <small>three day types · assign them in the week plan</small></div>
+      <div id="pFuel"></div>
+      <details class="calc" id="calc">
+        <summary>Calculate a starting point</summary>
+        <div class="row2">
+          <div><label class="lbl">Sex</label><select class="field" id="cSex"><option value="m">Male</option><option value="f">Female</option></select></div>
+          <div><label class="lbl">Age</label><input class="field" id="cAge" type="number" inputmode="numeric"></div>
+        </div>
+        <div class="row2">
+          <div><label class="lbl">Height (cm)</label><input class="field" id="cHeight" type="number" inputmode="decimal"></div>
+          <div><label class="lbl">Weight (kg)</label><input class="field" id="cWeight" type="number" inputmode="decimal"></div>
+        </div>
+        <label class="lbl">Activity</label>
+        <select class="field" id="cAct">
+          <option value="1.2">Desk job, little exercise</option>
+          <option value="1.375">1–3 workouts a week</option>
+          <option value="1.55" selected>3–5 workouts a week</option>
+          <option value="1.725">6–7 workouts or a physical job</option>
+        </select>
+        <label class="lbl">Goal</label>
+        <select class="field" id="cGoal">
+          <option value="-500">Lose ~0.5 kg / week</option>
+          <option value="-250">Lose slowly</option>
+          <option value="0">Maintain</option>
+          <option value="250">Gain slowly (lean bulk)</option>
+        </select>
+        <button class="btn ghost" id="cGo" style="margin-top:10px">Fill “regular day” targets</button>
+        <div class="tipnote" id="cOut">A starting estimate. After 2–3 weeks, adjust using your 7-day average weight.</div>
+      </details>
+    </div>
+
+    <div class="card">
+      <div class="sect" style="margin-top:0">Week plan <small>workout + day type for each weekday</small></div>
+      <div id="pDays"></div>
+    </div>
+
+    <div class="card">
+      <div class="sect" style="margin-top:0">Quick-add buttons <small>one tap logs a meal you eat often · up to 4</small></div>
+      <div id="pQuick"></div>
+      <button class="btn ghost" id="pQuickAdd" style="margin-top:8px;padding:10px;font-size:13px">＋ Add a button</button>
+    </div>
+
+    <button class="btn" id="pSave">Save profile</button>
+    <div class="syncst" id="pSt" style="margin:8px 4px 0"></div>
+
+    <div class="card">
+      <div class="sect" style="margin-top:0">Start from a template <small>fills the form above · nothing changes until you save</small></div>
+      <div class="row2" style="margin-top:6px">
+        <button class="btn ghost" id="pPresetStarter">Full-body 3-day starter</button>
+        <button class="btn ghost" id="pPresetTeja">Teja’s 12-week cut</button>
+      </div>
     </div>
 
     <div class="card">
@@ -288,31 +402,13 @@
   </div>
 </section>
 
-<!-- ===================== WEEK ===================== -->
-<section class="view" id="view-week">
-  <div class="wrap"><div id="weekBody"></div></div>
-</section>
-
-<!-- ===================== MEALS ===================== -->
-<section class="view" id="view-meals">
-  <div class="wrap" id="mealsBody"></div>
-</section>
-
-<!-- ===================== SHOP ===================== -->
-<section class="view" id="view-shop">
-  <div class="wrap">
-    <div class="sect" style="margin-top:14px">Weekly Shop <small>Tap to check off · amounts cover ~11 prepped meals</small></div>
-    <div id="shopBody"></div>
-    <button class="btn ghost" id="resetShop" style="margin:16px 0 8px">Reset checklist</button>
-  </div>
-</section>
-
 <nav>
   <div class="row">
     <button class="on" data-tab="today"><span class="ic">▦</span>Today</button>
     <button data-tab="week"><span class="ic">≡</span>Week</button>
     <button data-tab="meals"><span class="ic">◍</span>Meals</button>
     <button data-tab="shop"><span class="ic">⊞</span>Shop</button>
+    <button data-tab="me"><span class="ic">◉</span>Me</button>
   </div>
 </nav>
 
@@ -433,20 +529,10 @@ function renderSyncStatus(){
   else{el.className='syncst ok';el.textContent='Connected · '+(ago==null?'syncing…':ago===0?'synced just now':'synced '+ago+' min ago')+(n?' · '+n+' queued':'')}
 }
 
-/* ---------- fuel targets ---------- */
-const FUEL={
-  regular:{k:1875,p:155,c:190,f:55,sub:'Regular day · shake + 2 prepped meals',
-    note:'Shake after the gym, then chicken + rice + veg + light curry for lunch &amp; dinner. Eat rice <b>with</b> protein + veg, never alone, and walk 10–15 min after lunch &amp; dinner.'},
-  monday:{k:900,p:50,c:100,f:30,sub:'Fast day · one meal at 8 pm',
-    note:'Water, black coffee/tea + a pinch of salt or zero-cal electrolytes. Break the fast protein-first: paneer tikka, dal + curd, chana or rajma + 1–2 roti. Light on protein? Add a whey shake.'},
-  saturday:{k:2500,p:150,c:250,f:85,sub:'Cheat-meal day · ~1,300 kcal for the cheat meal',
-    note:'Shake + one prepped meal + one planned Indian meal. One rich dish, built around protein (biryani + raita, or tandoori + dal + 1 naan). Dessert &amp; sweet drinks count inside the 1,300.'}
-};
-
 /* ---------- plan data ---------- */
 const CUFF={name:'Band cuff warm-up',scheme:'5 min',sets:0,note:'5 min easy cardio, band external rotations + pull-aparts, then 2 lighter ramp-up sets on the first lift.'};
 
-const MON={type:'rest',pill:'Fast + Rest',pillClass:'rest',fuel:'monday',
+const MON={type:'rest',pill:'Fast + Rest',pillClass:'rest',
   title:'Fast / Rest',
   blurb:'Water-only until 8 pm, then one protein-first vegetarian meal. Recovery day — walk, stretch, nothing hard.',
   items:[
@@ -455,7 +541,7 @@ const MON={type:'rest',pill:'Fast + Rest',pillClass:'rest',fuel:'monday',
     {name:'Mobility / stretch',scheme:'10 min',sets:0,note:'Hips, hamstrings, shoulders.'},
     {name:'8 pm meal · protein first',scheme:'~900 kcal · 50 g+ P',sets:0,note:'Paneer tikka, dal + curd, chana or rajma + 1–2 roti. Skip fried snacks.'}
   ]};
-const SUN={type:'rest',pill:'Rest + Prep',pillClass:'recov',fuel:'regular',
+const SUN={type:'rest',pill:'Rest + Prep',pillClass:'recov',
   title:'Rest · Meal Prep',
   blurb:'No lifting. Bank your steps, prep the week, and log your check-ins.',
   items:[
@@ -465,7 +551,7 @@ const SUN={type:'rest',pill:'Rest + Prep',pillClass:'recov',fuel:'regular',
     {name:'Meal prep',scheme:'curry base + rice + chicken',sets:0,note:'Cook a 4-serving curry base, portion chicken (200 g raw) and veg (200 g) + rice (~55 g raw) per meal.'}
   ]};
 
-const UPA={type:'lift',pill:'Upper A',pillClass:'',fuel:'regular',title:'Chest + Shoulders',
+const UPA={type:'lift',pill:'Upper A',pillClass:'',title:'Chest + Shoulders',
   blurb:'Upper chest and delts first — they show most in a suit. Finish every set with 1–2 good reps left.',
   items:[
     CUFF,
@@ -477,7 +563,7 @@ const UPA={type:'lift',pill:'Upper A',pillClass:'',fuel:'regular',title:'Chest +
     {name:'Overhead DB triceps extension',scheme:'3 × 10–15 · 60 s',sets:3},
     {name:'DB curl',scheme:'3 × 10–15 · 60 s',sets:3,note:'Start ~20–25 lb. Arm priority.'}
   ]};
-const LOA={type:'lift',pill:'Lower A',pillClass:'',fuel:'regular',title:'Quads',
+const LOA={type:'lift',pill:'Lower A',pillClass:'',title:'Quads',
   blurb:'Chicken-legs fix, part 1. Full depth, controlled lowering.',
   items:[
     CUFF,
@@ -488,7 +574,7 @@ const LOA={type:'lift',pill:'Lower A',pillClass:'',fuel:'regular',title:'Quads',
     {name:'Standing calf raise',scheme:'4 × 10–15 · 60 s',sets:4,note:'2 s pause at the bottom, full stretch. Thin calves need the pause.'},
     {name:'Hanging knee raise',scheme:'3 × 10–15 · 60 s',sets:3}
   ]};
-const UPB={type:'lift',pill:'Upper B',pillClass:'',fuel:'regular',title:'Back + Width',
+const UPB={type:'lift',pill:'Upper B',pillClass:'',title:'Back + Width',
   blurb:'V-taper day: lats, upper back, rear and side delts. Broader shoulders make the waist look smaller.',
   items:[
     CUFF,
@@ -500,7 +586,7 @@ const UPB={type:'lift',pill:'Upper B',pillClass:'',fuel:'regular',title:'Back + 
     {name:'Rear-delt fly',scheme:'3 × 15–20 · 60 s',sets:3,note:'DB or cable.'},
     {name:'Hammer curl + triceps pushdown',scheme:'3 × 10–12 each · superset',sets:3,note:'One set of each = one round. Rest 60 s between rounds.'}
   ]};
-const SHA={type:'lift',pill:'Pump Day',pillClass:'',fuel:'regular',title:'Shoulders + Arms',
+const SHA={type:'lift',pill:'Pump Day',pillClass:'',title:'Shoulders + Arms',
   blurb:'Shorter pump day (~45 min). Light-to-moderate weights, chase the burn.',
   items:[
     CUFF,
@@ -511,7 +597,7 @@ const SHA={type:'lift',pill:'Pump Day',pillClass:'',fuel:'regular',title:'Should
     {name:'Push-ups',scheme:'2 sets · stop 2 reps short',sets:2},
     {name:'Ab wheel',scheme:'3 × 8–12 · 60 s',sets:3,note:'Or 45 s plank.'}
   ]};
-const LOB={type:'lift',pill:'Lower B',pillClass:'',fuel:'saturday',title:'Hamstrings + Glutes',
+const LOB={type:'lift',pill:'Lower B',pillClass:'',title:'Hamstrings + Glutes',
   blurb:'Chicken-legs fix, part 2. Earn the cheat meal.',
   items:[
     CUFF,
@@ -523,16 +609,76 @@ const LOB={type:'lift',pill:'Lower B',pillClass:'',fuel:'saturday',title:'Hamstr
     {name:'Cable crunch',scheme:'3 × 10–15 · 60 s',sets:3,note:'Or decline crunch.'}
   ]};
 
-// 0=Sun ... 6=Sat
-const WEEK=[
-  {day:'Sunday',s:SUN},
-  {day:'Monday',s:MON},
-  {day:'Tuesday',s:UPA},
-  {day:'Wednesday',s:LOA},
-  {day:'Thursday',s:UPB},
-  {day:'Friday',s:SHA},
-  {day:'Saturday',s:LOB}
-];
+/* generic sessions (for anyone) */
+const WARM={name:'Warm-up',scheme:'5 min',sets:0,note:'5 min easy cardio, then 1–2 lighter ramp-up sets on the first lift.'};
+const REST={type:'rest',pill:'Rest',pillClass:'rest',title:'Rest Day',
+  blurb:'No lifting today. Walk, stretch, and sleep well — recovery is where you grow.',
+  items:[{name:'Steps',scheme:'8–10k',sets:0},{name:'Mobility / stretch',scheme:'10 min',sets:0}]};
+const FBA={type:'lift',pill:'Full body A',pillClass:'',title:'Full Body A',
+  blurb:'Big lifts first. Finish every set with 1–2 good reps left. Hit the top of the range on all sets → add weight next time.',
+  items:[WARM,
+    {name:'Squat (goblet or barbell)',scheme:'3 × 8–10 · rest 2 min',sets:3},
+    {name:'Bench press (DB or barbell)',scheme:'3 × 8–10 · rest 2 min',sets:3},
+    {name:'Lat pulldown',scheme:'3 × 10–12 · 90 s',sets:3},
+    {name:'DB lateral raise',scheme:'3 × 12–15 · 60 s',sets:3},
+    {name:'Plank',scheme:'3 × 30–45 s',sets:3}
+  ]};
+const FBB={type:'lift',pill:'Full body B',pillClass:'',title:'Full Body B',
+  blurb:'Hinge, press overhead, row. Same rules: 1–2 reps in reserve, add weight when every set hits the top of the range.',
+  items:[WARM,
+    {name:'Romanian deadlift',scheme:'3 × 8–10 · rest 2 min',sets:3},
+    {name:'Overhead DB press',scheme:'3 × 8–10 · rest 2 min',sets:3},
+    {name:'Seated cable row',scheme:'3 × 10–12 · 90 s',sets:3},
+    {name:'Walking lunge',scheme:'2 × 10 / leg · 90 s',sets:2},
+    {name:'DB curl + triceps pushdown',scheme:'2 × 12 each · superset',sets:2}
+  ]};
+
+const SESSIONS={
+  REST:{s:REST,label:'Rest day'},
+  FBA:{s:FBA,label:'Full body A'},
+  FBB:{s:FBB,label:'Full body B'},
+  UPA:{s:UPA,label:'Upper A · chest + shoulders'},
+  LOA:{s:LOA,label:'Lower A · quads'},
+  UPB:{s:UPB,label:'Upper B · back + width'},
+  SHA:{s:SHA,label:'Shoulders + arms'},
+  LOB:{s:LOB,label:'Lower B · hams + glutes'},
+  MON:{s:MON,label:'Fast + rest'},
+  SUN:{s:SUN,label:'Rest + meal prep'}
+};
+const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const FUEL_KEYS=['regular','low','high'];
+
+/* ---------- profile ----------
+   One synced key, "profile". Each person sets their own on the Me tab. */
+const clone=o=>JSON.parse(JSON.stringify(o));
+const TEJA_FUEL={
+  regular:{label:'Regular day · shake + 2 prepped meals',k:1875,p:155,c:190,f:55,
+    note:'Shake after the gym, then chicken + rice + veg + light curry for lunch &amp; dinner. Eat rice <b>with</b> protein + veg, never alone, and walk 10–15 min after lunch &amp; dinner.'},
+  low:{label:'Fast day · one meal at 8 pm',k:900,p:50,c:100,f:30,
+    note:'Water, black coffee/tea + a pinch of salt or zero-cal electrolytes. Break the fast protein-first: paneer tikka, dal + curd, chana or rajma + 1–2 roti. Light on protein? Add a whey shake.'},
+  high:{label:'Cheat-meal day · ~1,300 kcal for the cheat meal',k:2500,p:150,c:250,f:85,
+    note:'Shake + one prepped meal + one planned Indian meal. One rich dish, built around protein (biryani + raita, or tandoori + dal + 1 naan). Dessert &amp; sweet drinks count inside the 1,300.'}
+};
+function presetTeja(){
+  return {v:1,preset:'teja',name:'Teja',liftUnit:'lb',start:DB.get('cutStart','2026-10-29')||'2026-10-29',
+    about:'28-year-old Indian man in Seattle on a fat-loss cut. Eats home-cooked Indian food (air-fried chicken thigh, rice with mixed veg, light onion-tomato curry, dal, roti, paneer) and Indian restaurant food (biryani, butter chicken, naan, dosa, tandoori).',
+    fuel:clone(TEJA_FUEL),
+    days:[{s:'SUN',fuel:'regular'},{s:'MON',fuel:'low'},{s:'UPA',fuel:'regular'},{s:'LOA',fuel:'regular'},{s:'UPB',fuel:'regular'},{s:'SHA',fuel:'regular'},{s:'LOB',fuel:'high'}],
+    quick:[{name:'Post-gym shake',kcal:540,p:52,c:63,f:9},{name:'Prepped meal · chicken + rice + veg + curry',kcal:680,p:52,c:76,f:18}]};
+}
+function presetStarter(){
+  const reg={label:'Every day',k:2000,p:140,c:220,f:60,note:'Build each meal around a protein + vegetables, then add carbs. Protein first if you are short on time.'};
+  return {v:1,preset:'starter',name:'',liftUnit:'lb',start:keyOf(new Date()),about:'',
+    fuel:{regular:reg,low:{...clone(reg),label:'Lighter day'},high:{...clone(reg),label:'Bigger day'}},
+    days:[{s:'REST',fuel:'regular'},{s:'FBA',fuel:'regular'},{s:'REST',fuel:'regular'},{s:'FBB',fuel:'regular'},{s:'REST',fuel:'regular'},{s:'FBA',fuel:'regular'},{s:'REST',fuel:'regular'}],
+    quick:[{name:'Protein shake · 1 scoop whey + water',kcal:120,p:24,c:3,f:2}]};
+}
+function hasProfile(){const p=DB.get('profile',null);return !!(p&&p.v)}
+function profile(){const p=DB.get('profile',null);return p&&p.v?p:presetStarter()}
+function isTeja(){return profile().preset==='teja'}
+function planFor(d){const p=profile(),e=(p.days||[])[d.getDay()]||{s:'REST',fuel:'regular'};
+  return {day:DAY_NAMES[d.getDay()],s:(SESSIONS[e.s]||SESSIONS.REST).s,fuel:FUEL_KEYS.includes(e.fuel)?e.fuel:'regular'}}
+function unitL(){return profile().liftUnit==='kg'?'kg':'lb'}
 
 /* ---------- date + phase helpers ---------- */
 let offset=0;
@@ -540,16 +686,16 @@ function curDate(){const d=new Date();d.setDate(d.getDate()+offset);return d}
 function keyOf(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dd}
 function exId(name){return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,28)}
 
-// 12-week cut started Thu 29 Oct 2026 (stored so it can be changed later)
-if(!DB.get('cutStart',null)) DB.set('cutStart','2026-10-29');
+// Program start date comes from the profile (Me tab).
 function weekOf(d){
-  const p=DB.get('cutStart','2026-10-29').split('-').map(Number);
+  const p=String(profile().start||keyOf(new Date())).split('-').map(Number);
   const s=new Date(p[0],p[1]-1,p[2]);
   const day=new Date(d.getFullYear(),d.getMonth(),d.getDate());
   const days=Math.round((day-s)/864e5); // round: immune to DST hour shifts
   return Math.floor(days/7)+1;
 }
 function phaseOf(wk){
+  if(!isTeja()) return {name:'',note:''};
   if(wk<1) return {name:'Pre-start',note:''};
   if(wk<=2) return {name:'Ease-in',note:'Weeks 1–2 after the break: 2 sets per exercise, stop 3–4 reps short, ~60–70% of old weights.'};
   if(wk<=7) return {name:'Build',note:'Full sets. Compounds 1–2 reps short of failure; last isolation set 0–1 short. Top of range on all sets → go up next time.'};
@@ -559,6 +705,7 @@ function phaseOf(wk){
 }
 function effSets(ex,wk){
   if(ex.sets<=0) return 0;
+  if(!isTeja()) return ex.sets;
   if(wk>=1&&wk<=2) return Math.min(ex.sets,2);
   if(wk===8) return Math.ceil(ex.sets/2);
   return ex.sets;
@@ -566,7 +713,7 @@ function effSets(ex,wk){
 
 /* ---------- render TODAY ---------- */
 function renderToday(){
-  const d=curDate(), dow=d.getDay(), info=WEEK[dow], s=info.s;
+  const d=curDate(), s=planFor(d).s;
   const dateKey=keyOf(d), wk=weekOf(d), ph=phaseOf(wk);
   document.getElementById('dateLabel').textContent=
     d.toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'}).toUpperCase()+(offset===0?' · TODAY':'');
@@ -591,7 +738,7 @@ function renderToday(){
       for(let k=0;k<n;k++){
         const w=st.w[k]||'', done=st.done[k]?'on':'';
         html+='<div class="setrow"><span class="sidx">Set '+(k+1)+'</span>'+
-          '<input type="number" inputmode="decimal" placeholder="lb" value="'+w+'" oninput="logW(\''+dateKey+'\',\''+id+'\','+k+',this.value)"><span class="unit">lb</span>'+
+          '<input type="number" inputmode="decimal" placeholder="'+unitL()+'" value="'+w+'" oninput="logW(\''+dateKey+'\',\''+id+'\','+k+',this.value)"><span class="unit">'+unitL()+'</span>'+
           '<div class="chk '+done+'" onclick="logDone(\''+dateKey+'\',\''+id+'\','+k+',this)">✓</div></div>';
       }
     } else {
@@ -627,7 +774,7 @@ function logDone(dateKey,id,k,el){
   el.classList.toggle('on',st.done[k]); updateProg();
 }
 function updateProg(){
-  const d=curDate(), s=WEEK[d.getDay()].s, wk=weekOf(d);
+  const d=curDate(), s=planFor(d).s, wk=weekOf(d);
   const pw=document.getElementById('todayProg');
   if(s.type!=='lift'){pw.style.display='none';return} pw.style.display='block';
   const log=DB.get('log-'+keyOf(d),{}); let total=0,done=0;
@@ -675,14 +822,10 @@ document.getElementById('nextDay').onclick=()=>{offset++;renderToday()};
 
 /* ---------- FOOD LOG ----------
    Stored per day under "meals-YYYY-MM-DD" = [{id,t,name,kcal,p,c,f,src,items?}] */
-const QUICK={
-  shake:{name:'Post-gym shake',kcal:540,p:52,c:63,f:9},
-  meal:{name:'Prepped meal · chicken + rice + veg + curry',kcal:680,p:52,c:76,f:18}
-};
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const r0=x=>Math.round(Number(x)||0);
 const fmt=n=>r0(n).toLocaleString();
-function fuelFor(d){return FUEL[WEEK[d.getDay()].s.fuel]||FUEL.regular}
+function fuelFor(d){const f=profile().fuel||{};return f[planFor(d).fuel]||f.regular||presetStarter().fuel.regular}
 function mealsKey(d){return 'meals-'+keyOf(d)}
 function dayTotals(d){
   return DB.get(mealsKey(d),[]).reduce((a,e)=>({kcal:a.kcal+r0(e.kcal),p:a.p+r0(e.p),c:a.c+r0(e.c),f:a.f+r0(e.f)}),{kcal:0,p:0,c:0,f:0});
@@ -703,8 +846,8 @@ function renderFood(){
   document.getElementById('pFill').style.width=Math.min(100,t.p/f.p*100)+'%';
   document.getElementById('cTxt').textContent='Carbs '+t.c+' / '+f.c+' g';
   document.getElementById('ffTxt').textContent='Fat '+t.f+' / '+f.f+' g';
-  document.getElementById('fuelSub').textContent=f.sub;
-  document.getElementById('fuelNote').innerHTML=f.note;
+  document.getElementById('fuelSub').textContent=f.label||'';
+  document.getElementById('fuelNote').innerHTML=f.note||'';
 
   // week (Mon–Sun)
   const ws=weekStart(d), today=keyOf(d);let budget=0,eaten=0,planBefore=0,eatenBefore=0;
@@ -800,6 +943,7 @@ function showReview(res,src){
   h+='<div class="mini" style="margin-top:8px"><span id="rTot"></span><span class="conf '+esc(res.confidence)+'">'+esc(res.confidence||'')+' confidence</span></div>'+
     (res.notes?'<div class="tipnote" style="margin:8px 0 0">'+esc(res.notes)+'</div>':'')+
     '<div class="tipnote" style="margin:6px 0 0">Adjust grams if the portion looks off — sauces and oil are the usual misses.</div>'+
+    (res.usage&&res.usage.limit?'<div class="mini" style="margin-top:6px"><span>Estimates today: '+r0(res.usage.today)+' of '+r0(res.usage.limit)+'</span></div>':'')+
     '<div class="row2" style="margin-top:10px"><button class="btn" id="rSave">Add to today</button><button class="btn ghost" id="pX">Discard</button></div></div>';
   panel().innerHTML=h;
   const upd=()=>{items.forEach((it,i)=>{const s=it.g0?it.g/it.g0:1;document.getElementById('rk'+i).textContent=fmt(it.kcal*s)});
@@ -813,8 +957,12 @@ function showReview(res,src){
       items:items.map(it=>{const s=it.g0?it.g/it.g0:1;return{name:it.name,grams:r0(it.g),kcal:r0(it.kcal*s),p:r0(it.p*s),c:r0(it.c*s),f:r0(it.f*s)}})});
   };
 }
-document.getElementById('qaShake').onclick=()=>addEntry({...QUICK.shake,src:'quick'});
-document.getElementById('qaMeal').onclick=()=>addEntry({...QUICK.meal,src:'quick'});
+function renderQuick(){
+  const q=(profile().quick||[]).slice(0,4);
+  const el=document.getElementById('qaQuick');
+  el.innerHTML=q.map((x,i)=>'<button data-q="'+i+'">＋ '+esc(String(x.name||'Food').split(' · ')[0])+'<small>'+fmt(x.kcal)+' kcal · '+r0(x.p)+' g P</small></button>').join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{const x=q[+b.dataset.q];addEntry({name:x.name,kcal:x.kcal,p:x.p,c:x.c,f:x.f,src:'quick'})});
+}
 document.getElementById('qaManual').onclick=showManual;
 document.getElementById('qaText').onclick=()=>Sync.on()?showAsk(null):needCloud();
 document.getElementById('qaPhoto').onclick=()=>Sync.on()?document.getElementById('photoIn').click():needCloud();
@@ -838,10 +986,13 @@ document.getElementById('cfgOff').onclick=()=>{try{localStorage.removeItem('_cfg
 
 /* ---------- render WEEK ---------- */
 function renderWeek(){
-  let html='<div class="sect" style="margin-top:14px">The Week <small>5 lifting days · Mon fast · Sat cheat meal · Sun prep</small></div>';
-  const order=[2,3,4,5,6,0,1]; // Tue..Mon
+  const P=profile();
+  const lifts=(P.days||[]).filter(e=>(SESSIONS[e.s]||SESSIONS.REST).s.type==='lift').length;
+  let html='<div class="sect" style="margin-top:14px">The Week <small>'+lifts+' lifting day'+(lifts===1?'':'s')+' · edit on the Me tab</small></div>';
+  const order=[1,2,3,4,5,6,0]; // Mon..Sun
   order.forEach(i=>{
-    const w=WEEK[i], s=w.s, f=FUEL[s.fuel]||FUEL.regular;
+    const e=(P.days||[])[i]||{s:'REST',fuel:'regular'}, s=(SESSIONS[e.s]||SESSIONS.REST).s, f=(P.fuel||{})[e.fuel]||(P.fuel||{}).regular||{k:0};
+    const w={day:DAY_NAMES[i]};
     html+='<div class="card tight"><div class="top" style="display:flex;justify-content:space-between;align-items:center;padding:15px 16px;cursor:pointer">';
     html+='<div><div style="font-family:\'Bebas Neue\';font-size:24px;letter-spacing:1px">'+w.day+' <span style="font-family:\'IBM Plex Mono\';font-size:11px;color:var(--faint);letter-spacing:0">~'+f.k.toLocaleString()+' kcal</span></div>'+
       '<span class="pill '+(s.pillClass||'')+'" style="margin-top:4px">'+s.pill+' · '+s.title+'</span></div>';
@@ -850,7 +1001,7 @@ function renderWeek(){
     s.items.forEach(ex=>{html+='<li style="font-size:13.5px;line-height:1.7"><b style="color:var(--text)">'+ex.name+'</b> <span style="font-family:\'IBM Plex Mono\';color:var(--accent);font-size:12px">'+ex.scheme+'</span></li>'});
     html+='</ul></div></div>';
   });
-  html+=`<div class="card meal">
+  if(P.preset==='teja')html+=`<div class="card meal">
     <h3>Weekly volume · priority areas</h3>
     <ul>
       <li>Side delts <b>~12</b> direct sets + pressing</li>
@@ -868,18 +1019,7 @@ function renderWeek(){
 }
 
 /* ---------- MEALS ---------- */
-const MEALS_HTML=`
-<div class="sect" style="margin-top:14px">Targets <small>weekly budget ~12,800 kcal · ~0.5 kg/week</small></div>
-<div class="card meal">
-  <table class="mt">
-    <tr><th>Day</th><th class="n">kcal</th><th class="n">P</th><th class="n">F</th><th class="n">C</th></tr>
-    <tr><td>Mon · fast + 1 meal</td><td class="n">~900</td><td class="n">50+</td><td class="n">30</td><td class="n">100</td></tr>
-    <tr><td>Tue–Fri, Sun</td><td class="n">~1,875</td><td class="n">155</td><td class="n">55</td><td class="n">190</td></tr>
-    <tr><td>Sat · cheat meal</td><td class="n">~2,500</td><td class="n">150</td><td class="n">85</td><td class="n">250</td></tr>
-  </table>
-  <div class="method">Maintenance is ~2,400–2,500. The budget is weekly — the lean Monday pays for the bigger Saturday.</div>
-</div>
-
+const TEJA_MEALS_HTML=`
 <div class="sect">Daily Template <small>Tue–Sun</small></div>
 <div class="card meal">
   <h3>① Post-gym Shake</h3><div class="kc">~540 kcal · ~52 g protein</div>
@@ -979,8 +1119,27 @@ const MEALS_HTML=`
     <li><b>Vitamin D</b> — get a level tested first, then dose to result</li>
   </ul>
 </div>`;
+const GENERIC_MEALS_HTML=`
+<div class="sect">Adjust <small>judge every 2 weeks by 7-day averages</small></div>
+<div class="card meal">
+  <table class="mt">
+    <tr><th>What you see (2 weeks)</th><th>Do</th></tr>
+    <tr><td>Trending the right way, waist/shape improving</td><td>Nothing</td></tr>
+    <tr><td>Weight flat when you want to lose</td><td>−150 kcal/day or +2,000 steps</td></tr>
+    <tr><td>Losing over ~1% of body weight a week, or lifts dropping</td><td>+150 kcal/day</td></tr>
+  </table>
+  <div class="method"><b>Habits that make tracking easy:</b> eat the same few meals most days and save them as quick-add buttons (Me tab); use 📷 for restaurant meals; hit protein first.</div>
+</div>`;
 function renderMeals(){
-  document.getElementById('mealsBody').innerHTML=MEALS_HTML;
+  const P=profile(), F=P.fuel||{};
+  const used=FUEL_KEYS.filter(k=>(P.days||[]).some(e=>e.fuel===k));
+  const days=k=>[1,2,3,4,5,6,0].filter(i=>((P.days||[])[i]||{}).fuel===k).map(i=>DAY_NAMES[i].slice(0,3)).join(', ');
+  let wk=0;for(let i=0;i<7;i++){wk+=((F[((P.days||[])[i]||{}).fuel]||F.regular||{}).k)||0}
+  let h='<div class="sect" style="margin-top:14px">Targets <small>weekly budget ~'+fmt(wk)+' kcal · edit on the Me tab</small></div><div class="card meal"><table class="mt">'+
+    '<tr><th>Day type</th><th class="n">kcal</th><th class="n">P</th><th class="n">F</th><th class="n">C</th></tr>';
+  used.forEach(k=>{const f=F[k]||{};h+='<tr><td>'+esc(String(f.label||k).split(' · ')[0])+'<small style="display:block;color:var(--faint);font-size:11px">'+days(k)+'</small></td><td class="n">'+fmt(f.k)+'</td><td class="n">'+r0(f.p)+'</td><td class="n">'+r0(f.f)+'</td><td class="n">'+r0(f.c)+'</td></tr>'});
+  h+='</table><div class="method">The budget is weekly — a lighter day pays for a bigger one.</div></div>';
+  document.getElementById('mealsBody').innerHTML=h+(P.preset==='teja'?TEJA_MEALS_HTML:GENERIC_MEALS_HTML);
 }
 
 /* ---------- GROCERIES (≈11 prepped meals + 7 shakes) ---------- */
@@ -994,6 +1153,7 @@ const GROCERIES={
 };
 function renderShop(){
   const checked=DB.get('shop',{}); let html='';
+  if(!isTeja()){document.getElementById('shopBody').innerHTML='<div class="card"><div class="tipnote" style="margin:0">No shopping list for this plan yet. It comes with the <b>Teja’s 12-week cut</b> template.</div></div>';return}
   Object.keys(GROCERIES).forEach(cat=>{
     html+='<div class="gcat">'+cat+'</div>';
     GROCERIES[cat].forEach(([n,q])=>{const id=exId(cat+'-'+n);const on=checked[id]?'checked':'';
@@ -1020,8 +1180,9 @@ document.querySelectorAll('nav button').forEach(b=>{
 
 /* ---------- phase tag ---------- */
 function renderPhaseTag(){
-  const wk=weekOf(new Date()), ph=phaseOf(wk);
-  document.getElementById('phaseTag').textContent=(wk>=1&&wk<=12?'Week '+wk+' · ':'')+ph.name;
+  const P=profile(), wk=weekOf(new Date()), ph=phaseOf(wk);
+  document.getElementById('hdrSub').textContent=(P.name||'New user')+(P.preset==='teja'?' · 12-week cut':'');
+  document.getElementById('phaseTag').textContent=isTeja()?((wk>=1&&wk<=12?'Week '+wk+' · ':'')+ph.name):(wk>=1?'Week '+wk:'');
 }
 
 /* ---------- backup: export / import ---------- */
@@ -1045,9 +1206,113 @@ document.getElementById('importFile').onchange=(e)=>{
   r.readAsText(f);e.target.value='';
 };
 
+/* ---------- ME TAB (profile editor) ---------- */
+let meDraft=null, meDirty=false;
+function goTab(t){const b=document.querySelector('nav button[data-tab="'+t+'"]');if(b)b.click()}
+function renderBanner(){
+  const el=document.getElementById('profileBanner');
+  el.innerHTML=hasProfile()?'':'<div class="card banner"><div class="sect" style="margin-top:0">Welcome <small>set up your profile first</small></div><div class="tipnote" style="margin:4px 0 10px">Pick a template, set your calorie targets and weekly plan, then save. If you were given an API URL + token, add them under Cloud sync on the same tab.</div><button class="btn" id="bannerGo">Set up my profile</button></div>';
+  const b=document.getElementById('bannerGo');if(b)b.onclick=()=>goTab('me');
+}
+// Copy the plain form fields into the draft (targets/days/quick update the draft live).
+function fieldsToDraft(){
+  if(!meDraft)return;
+  meDraft.name=document.getElementById('pName').value;
+  meDraft.about=document.getElementById('pAbout').value;
+  meDraft.liftUnit=document.getElementById('pUnit').value;
+  meDraft.start=document.getElementById('pStart').value;
+}
+function renderMe(force,src){
+  if(meDirty&&!force)return;
+  meDraft=clone(src||profile());
+  const v=(id,x)=>{document.getElementById(id).value=x==null?'':x};
+  v('pName',meDraft.name);v('pAbout',meDraft.about);v('pUnit',meDraft.liftUnit||'lb');v('pStart',meDraft.start);
+  // targets
+  let h='';
+  FUEL_KEYS.forEach(k=>{const f=(meDraft.fuel=meDraft.fuel||{})[k]=meDraft.fuel[k]||clone(meDraft.fuel.regular||presetStarter().fuel.regular);
+    h+='<div class="frow"><input class="field" data-fk="'+k+'" data-ff="label" value="'+esc(f.label||'')+'" placeholder="'+({regular:'Regular day',low:'Lighter day',high:'Bigger day'})[k]+'">'+
+      '<div class="g4">'+[['k','kcal'],['p','protein'],['c','carbs'],['f','fat']].map(([ff,lab])=>'<label><span>'+lab+'</span><input type="number" inputmode="numeric" data-fk="'+k+'" data-ff="'+ff+'" value="'+r0(f[ff])+'"></label>').join('')+'</div></div>'});
+  document.getElementById('pFuel').innerHTML=h;
+  // week plan (Mon..Sun)
+  const sOpts=id=>Object.keys(SESSIONS).map(k=>'<option value="'+k+'"'+(k===id?' selected':'')+'>'+esc(SESSIONS[k].label)+'</option>').join('');
+  const fOpts=id=>FUEL_KEYS.map(k=>'<option value="'+k+'"'+(k===id?' selected':'')+'>'+({regular:'Reg',low:'Light',high:'Big'})[k]+' '+fmt(meDraft.fuel[k].k)+'</option>').join('');
+  meDraft.days=meDraft.days||presetStarter().days;
+  document.getElementById('pDays').innerHTML=[1,2,3,4,5,6,0].map(i=>{const e=meDraft.days[i]||{s:'REST',fuel:'regular'};
+    return '<div class="drow"><b>'+DAY_NAMES[i].slice(0,3)+'</b><select data-day="'+i+'" data-dk="s">'+sOpts(e.s)+'</select><select data-day="'+i+'" data-dk="fuel">'+fOpts(e.fuel)+'</select></div>'}).join('');
+  renderQuickEditor();
+  // calculator defaults
+  const w=(()=>{for(let i=0;i<30;i++){const dd=new Date();dd.setDate(dd.getDate()-i);const x=DB.get('weigh-'+keyOf(dd),null);if(x&&parseFloat(x.weight))return parseFloat(x.weight)}return ''})();
+  if(!document.getElementById('cWeight').value)document.getElementById('cWeight').value=w;
+  document.getElementById('pSt').textContent=hasProfile()?'':'Not saved yet — this is the starter template.';
+  document.getElementById('pSt').className='syncst';
+}
+function renderQuickEditor(){
+  meDraft.quick=meDraft.quick||[];
+  document.getElementById('pQuick').innerHTML=meDraft.quick.length?meDraft.quick.map((q,i)=>
+    '<div class="qrow"><div class="top2"><input class="field" data-qi="'+i+'" data-qf="name" value="'+esc(q.name||'')+'" placeholder="Name (e.g. Oats + whey)"><button class="xbtn" data-qdel="'+i+'">✕</button></div>'+
+    '<div class="g4">'+[['kcal','kcal'],['p','protein'],['c','carbs'],['f','fat']].map(([ff,lab])=>'<label><span>'+lab+'</span><input type="number" inputmode="numeric" data-qi="'+i+'" data-qf="'+ff+'" value="'+r0(q[ff])+'"></label>').join('')+'</div></div>').join('')
+    :'<div class="tipnote" style="margin:0">No buttons yet.</div>';
+  document.getElementById('pQuickAdd').style.display=meDraft.quick.length>=4?'none':'block';
+}
+(function wireMe(){
+  const root=document.getElementById('view-me');
+  const num=x=>{const n=Number(x);return Number.isFinite(n)?Math.max(0,Math.round(n)):0};
+  root.addEventListener('input',e=>{
+    const t=e.target;if(!meDraft)return;
+    if(t.dataset.fk){const f=meDraft.fuel[t.dataset.fk];f[t.dataset.ff]=t.dataset.ff==='label'?t.value:num(t.value);meDirty=true;
+      if(t.dataset.ff==='k')root.querySelectorAll('select[data-dk="fuel"] option[value="'+t.dataset.fk+'"]').forEach(o=>{o.textContent=o.textContent.split(' ')[0]+' '+fmt(f.k)})}
+    else if(t.dataset.qi!=null){const q=meDraft.quick[+t.dataset.qi];q[t.dataset.qf]=t.dataset.qf==='name'?t.value:num(t.value);meDirty=true}
+    else if(['pName','pAbout','pUnit','pStart'].includes(t.id)){meDirty=true}
+  });
+  root.addEventListener('change',e=>{
+    const t=e.target;if(!meDraft)return;
+    if(t.dataset.day!=null){meDraft.days[+t.dataset.day][t.dataset.dk]=t.value;meDirty=true}
+  });
+  root.addEventListener('click',e=>{
+    const t=e.target;
+    if(t.dataset.qdel!=null){meDraft.quick.splice(+t.dataset.qdel,1);meDirty=true;renderQuickEditor()}
+  });
+  document.getElementById('pQuickAdd').onclick=()=>{if(meDraft.quick.length<4){meDraft.quick.push({name:'',kcal:0,p:0,c:0,f:0});meDirty=true;renderQuickEditor()}};
+  const loadPreset=(p)=>{
+    fieldsToDraft();
+    if(p.preset!=='teja'){p.name=meDraft.name||p.name;p.about=meDraft.about||p.about}
+    renderMe(true,p);meDirty=true;
+    const st=document.getElementById('pSt');st.className='syncst';st.textContent='Template loaded — review it, then tap Save profile.';
+  };
+  document.getElementById('pPresetStarter').onclick=()=>loadPreset(presetStarter());
+  document.getElementById('pPresetTeja').onclick=()=>loadPreset(presetTeja());
+  document.getElementById('cGo').onclick=()=>{
+    const g=id=>Number(document.getElementById(id).value);
+    const male=document.getElementById('cSex').value==='m', age=g('cAge'), h=g('cHeight'), w=g('cWeight'), act=g('cAct'), goal=g('cGoal');
+    const out=document.getElementById('cOut');
+    if(!(age>=14&&age<=100&&h>=120&&h<=230&&w>=35&&w<=250)){out.textContent='Enter age, height (cm) and weight (kg).';return}
+    const bmr=10*w+6.25*h-5*age+(male?5:-161), tdee=bmr*act;
+    const k=Math.round(Math.max(tdee+goal,bmr)/25)*25;
+    const p=Math.round(w*(goal<0?2.0:1.8)), f=Math.round(Math.max(w*0.8,k*0.25/9)), c=Math.max(0,Math.round((k-4*p-9*f)/4));
+    fieldsToDraft();Object.assign(meDraft.fuel.regular,{k,p,c,f});
+    renderMe(true,meDraft);meDirty=true;
+    out.textContent='Maintenance ≈ '+fmt(tdee)+' kcal/day. Regular day set to '+fmt(k)+' kcal · '+p+' g protein · '+c+' g carbs · '+f+' g fat. Adjust after 2–3 weeks of weigh-ins.';
+  };
+  document.getElementById('pSave').onclick=()=>{
+    const p=clone(meDraft);
+    p.v=1;p.name=document.getElementById('pName').value.trim().slice(0,40);
+    p.about=document.getElementById('pAbout').value.trim().slice(0,600);
+    p.liftUnit=document.getElementById('pUnit').value==='kg'?'kg':'lb';
+    p.start=document.getElementById('pStart').value||keyOf(new Date());
+    p.quick=(p.quick||[]).filter(q=>q.name&&q.kcal>0).slice(0,4);
+    const st=document.getElementById('pSt');
+    if(!(p.fuel.regular.k>=800)){st.className='syncst err';st.textContent='Regular-day calories look too low — check the targets.';return}
+    DB.set('profile',p);meDirty=false;
+    rerenderAll();st.className='syncst ok';st.textContent='Saved'+(Sync.on()?' · syncing to your account':'')+'.';
+  };
+})();
+
 /* ---------- init ---------- */
-function rerenderAll(){renderPhaseTag();renderToday();renderShop();renderSyncStatus()}
-renderPhaseTag();renderToday();renderWeek();renderMeals();renderShop();
+// One-time migration: phones that ran the single-user version (they have
+// "cutStart") get Teja's plan as their saved profile, so nothing changes for him.
+if(!hasProfile()&&DB.get('cutStart',null))DB.set('profile',presetTeja());
+function rerenderAll(){renderPhaseTag();renderBanner();renderQuick();renderToday();renderWeek();renderMeals();renderShop();renderMe();renderSyncStatus()}
+rerenderAll();
 Sync.start();
 </script>
 </body>

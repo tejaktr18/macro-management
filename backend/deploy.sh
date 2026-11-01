@@ -73,7 +73,8 @@ aws cloudformation deploy \
     CodeVersion="$CODE_VERSION" \
     ModelId="$MODEL_ID" \
     AllowedOrigins="$ALLOWED_ORIGINS" \
-    AppVersion="$VERSION_LABEL"
+    AppVersion="$VERSION_LABEL" \
+    DailyAnalyzeLimit="${DAILY_ANALYZE_LIMIT:-40}"
 
 API_URL=$(out "$APP_NAME" ApiUrl)
 SECRET_ARN=$(out "$APP_NAME" ApiTokenSecretArn)
